@@ -3,19 +3,22 @@ import React from 'react';
 import {createNativeBottomTabNavigator} from '@bottom-tabs/react-navigation';
 import {MD3Colors} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import AccountNavigator from './AccountNavigator';
-import SearchNavigator from './SearchNavigator';
-import HomeNavigator from './HomeNavigator';
+import PersonalNavigator from './PersonalNavigator';
+import ContractNavigator from './ContractNavigator';
+import IncomeNavigator from './IncomeNavigator';
+import PerformanceNavigator from './PerformanceNavigator';
 
 export type TabsParamList = {
-  HomeNavigator: undefined;
-  SearchNavigator: undefined;
-  AccountNavigator: undefined;
+  PersonalNavigator: undefined;
+  ContractNavigator: undefined;
+  IncomeNavigator: undefined;
+  PerformanceNavigator: undefined;
 };
 
-const homeIcon = Icon.getImageSourceSync('home', 24);
-const magnifyIcon = Icon.getImageSourceSync('magnify', 24);
-const accountIcon = Icon.getImageSourceSync('account', 24);
+const personIcon = Icon.getImageSourceSync('account', 24);
+const contractIcon = Icon.getImageSourceSync('file-document', 24);
+const incomeIcon = Icon.getImageSourceSync('currency-usd', 24);
+const performanceIcon = Icon.getImageSourceSync('chart-line', 24);
 
 const Tabs = createNativeBottomTabNavigator<TabsParamList>();
 
@@ -23,27 +26,35 @@ const TabsNavigator = () => {
   return (
     <Tabs.Navigator tabBarActiveTintColor={MD3Colors.primary50}>
       <Tabs.Screen
-        name="HomeNavigator"
-        component={HomeNavigator}
+        name="PersonalNavigator"
+        component={PersonalNavigator}
         options={{
-          title: 'Home',
-          tabBarIcon: () => homeIcon,
+          title: 'Thông tin',
+          tabBarIcon: () => personIcon,
         }}
       />
       <Tabs.Screen
-        name="SearchNavigator"
-        component={SearchNavigator}
+        name="ContractNavigator"
+        component={ContractNavigator}
         options={{
-          title: 'Screen',
-          tabBarIcon: () => magnifyIcon,
+          title: 'Hợp đồng',
+          tabBarIcon: () => contractIcon,
         }}
       />
       <Tabs.Screen
-        name="AccountNavigator"
-        component={AccountNavigator}
+        name="IncomeNavigator"
+        component={IncomeNavigator}
         options={{
-          title: 'Account',
-          tabBarIcon: () => accountIcon,
+          title: 'Thu nhập',
+          tabBarIcon: () => incomeIcon,
+        }}
+      />
+      <Tabs.Screen
+        name="PerformanceNavigator"
+        component={PerformanceNavigator}
+        options={{
+          title: 'Hiệu suất',
+          tabBarIcon: () => performanceIcon,
         }}
       />
     </Tabs.Navigator>

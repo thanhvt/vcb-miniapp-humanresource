@@ -1,12 +1,12 @@
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import TabsNavigator from './TabsNavigator';
 
 export type MainStackParamList = {
   Tabs: undefined;
 };
 
-const Main = createNativeStackNavigator<MainStackParamList>();
+const Main = createStackNavigator<MainStackParamList>();
 
 const MainNavigator = () => {
   return (
