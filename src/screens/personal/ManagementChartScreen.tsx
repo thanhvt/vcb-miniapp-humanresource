@@ -1,13 +1,25 @@
 import React, {useState, useMemo} from 'react';
-import {ScrollView, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {Card, Text, Avatar, useTheme, Searchbar, Chip, Portal, Modal, Button} from 'react-native-paper';
+import {ScrollView, View, StyleSheet, TouchableOpacity, Animated} from 'react-native';
+import {Card, Text, Avatar, useTheme, Searchbar, Chip, Portal, Modal, Button, IconButton} from 'react-native-paper';
 import {containers, layout, margin} from '../../theme';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useCallback} from 'react';
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
   searchContainer: {
     padding: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: '#fff',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   filterButton: {
     paddingVertical: 4,
@@ -26,14 +38,39 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    elevation: 2,
+    elevation: 4,
+    marginHorizontal: 8,
+    marginVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   connector: {
     width: 2,
-    height: 20,
-    backgroundColor: 'gray',
+    height: 24,
     alignSelf: 'center',
     marginVertical: 4,
+  },
+  roleIcon: {
+    position: 'absolute',
+    right: -4,
+    top: -4,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    elevation: 3,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
   },
 });
 
@@ -85,6 +122,7 @@ interface PersonCardProps {
 
 const PersonCard = ({name, position, department, email, type = 'colleague'}: PersonCardProps) => {
   const theme = useTheme();
+  const [scaleAnim] = useState(new Animated.Value(0));
   
   const getBorderColor = () => {
     switch (type) {
@@ -97,7 +135,33 @@ const PersonCard = ({name, position, department, email, type = 'colleague'}: Per
     }
   };
 
+  React.useEffect(() => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 50,
+      friction: 7,
+    }).start();
+  }, []);
+
+  const getRoleIcon = () => {
+    switch (type) {
+      case 'manager':
+        return 'account-tie';
+      case 'self':
+        return 'account-star';
+      case 'subordinate':
+        return 'account';
+      default:
+        return 'account-group';
+    }
+  };
+
   return (
+    <Animated.View style={{
+      transform: [{scale: scaleAnim}],
+      opacity: scaleAnim,
+    }}>
     <Card
       style={[
         styles.card,
@@ -106,7 +170,13 @@ const PersonCard = ({name, position, department, email, type = 'colleague'}: Per
           backgroundColor: theme.colors.surface,
         },
       ]}>
-      <Card.Content style={[layout.row, layout.alignCenter]}>
+      <Card.Content style={styles.cardContent}>
+        <IconButton
+          icon={getRoleIcon()}
+          size={24}
+          style={styles.roleIcon}
+          iconColor={getBorderColor()}
+        />
         <Avatar.Text
           size={40}
           label={name.split(' ').map(n => n[0]).join('')}
@@ -123,6 +193,7 @@ const PersonCard = ({name, position, department, email, type = 'colleague'}: Per
         </View>
       </Card.Content>
     </Card>
+    </Animated.View>
   );
 };
 
@@ -197,7 +268,7 @@ const ManagementChartScreen = () => {
         </Modal>
       </Portal>
 
-      <ScrollView style={containers.screen}>
+      <ScrollView style={styles.container}>
         {/* Search and Filter */}
         <View style={[styles.searchContainer, {backgroundColor: theme.colors.surface}]}>
           <Searchbar
@@ -224,25 +295,34 @@ const ManagementChartScreen = () => {
 
         {/* Manager Section */}
         <View style={styles.section}>
-          <Text variant="titleMedium" style={[margin.mb2, {color: theme.colors.primary}]}>
-            Quản lý trực tiếp
-          </Text>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="account-tie" size={24} color={theme.colors.primary} />
+            <Text variant="titleMedium" style={[margin.mh2, {color: theme.colors.primary}]}>
+              Quản lý trực tiếp
+            </Text>
+          </View>
           {filteredData.manager && <PersonCard {...filteredData.manager} type="manager" />}
         </View>
 
         {/* Current Position */}
         <View style={styles.section}>
-          <Text variant="titleMedium" style={[margin.mb2, {color: theme.colors.secondary}]}>
-            Vị trí hiện tại
-          </Text>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="account-star" size={24} color={theme.colors.secondary} />
+            <Text variant="titleMedium" style={[margin.mh2, {color: theme.colors.secondary}]}>
+              Vị trí hiện tại
+            </Text>
+          </View>
           <PersonCard {...filteredData.self} type="self" />
         </View>
 
         {/* Colleagues Section */}
         <View style={styles.section}>
-          <Text variant="titleMedium" style={[margin.mb2, {color: theme.colors.onSurfaceVariant}]}>
-            Đồng nghiệp cùng cấp ({filteredData.colleagues.length})
-          </Text>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="account-group" size={24} color={theme.colors.onSurfaceVariant} />
+            <Text variant="titleMedium" style={[margin.mh2, {color: theme.colors.onSurfaceVariant}]}>
+              Đồng nghiệp cùng cấp ({filteredData.colleagues.length})
+            </Text>
+          </View>
           {filteredData.colleagues.map((colleague, index) => (
             <View key={colleague.email} style={margin.mb2}>
               <PersonCard {...colleague} />

@@ -1,10 +1,11 @@
 import React from 'react';
-import {ScrollView, View} from 'react-native';
-import {Avatar, Card, Text, IconButton, useTheme} from 'react-native-paper';
+import {ScrollView, View, StyleSheet, Dimensions} from 'react-native';
+import {Avatar, Card, Text, IconButton, useTheme, Surface} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {PersonalStackParamList} from '../../navigation/PersonalNavigator';
 import {containers, layout, margin, padding} from '../../theme';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type NavigationProp = NativeStackNavigationProp<PersonalStackParamList>;
 
@@ -23,97 +24,227 @@ const personalInfo = {
 const PersonalDashboardScreen = () => {
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const screenWidth = Dimensions.get('window').width;
 
   const navigateToInfo = () => navigation.navigate('PersonalInfo');
   const navigateToChart = () => navigation.navigate('ManagementChart');
   const navigateToEdit = () => navigation.navigate('EditProfile');
 
   return (
-    <ScrollView style={containers.screen}>
+    <ScrollView 
+      style={[containers.screen, styles.container]}
+      showsVerticalScrollIndicator={false}>
+      
       {/* Profile Summary Card */}
-      <Card style={[margin.m3, {backgroundColor: theme.colors.surface}]}>
-        <Card.Content>
-          <View style={[layout.row, layout.alignCenter, margin.mb3]}>
-            <Avatar.Image
-              size={80}
-              source={{uri: 'https://ui-avatars.com/api/?name=' + personalInfo.fullName}}
-            />
+      <Surface style={styles.profileCard} elevation={2}>
+          <View style={[styles.headerBackground, { backgroundColor: theme.colors.primary }]}>
+            <View style={styles.profileContent}>
+              <View style={[layout.row, layout.alignCenter]}>
+            <Surface style={styles.avatarContainer} elevation={4}>
+              <Avatar.Image
+                size={84}
+                source={{uri: 'https://ui-avatars.com/api/?name=' + personalInfo.fullName + '&background=fff&color=000'}}
+              />
+            </Surface>
             <View style={[margin.mh3, layout.fill]}>
-              <Text variant="titleLarge">{personalInfo.fullName}</Text>
-              <Text variant="bodyMedium" style={{color: theme.colors.onSurfaceVariant}}>
+              <Text variant="titleLarge" style={styles.nameText}>{personalInfo.fullName}</Text>
+              <Text variant="bodyLarge" style={styles.positionText}>
                 {personalInfo.position}
               </Text>
-              <Text variant="bodyMedium" style={{color: theme.colors.onSurfaceVariant}}>
+              <Text variant="bodyMedium" style={styles.departmentText}>
                 {personalInfo.department}
               </Text>
             </View>
             <IconButton
               icon="pencil"
               mode="contained"
+              size={20}
               onPress={navigateToEdit}
-              containerColor={theme.colors.primary}
-              iconColor={theme.colors.surface}
+              containerColor="rgba(255, 255, 255, 0.9)"
+              iconColor={theme.colors.primary}
+              style={styles.editButton}
             />
+              </View>
+            </View>
           </View>
-        </Card.Content>
-      </Card>
+      </Surface>
 
       {/* Quick Info Cards */}
-      <View style={[layout.row, layout.wrap, padding.ph3]}>
-        <Card
-          style={[{width: '48%'}, margin.m1]}
-          onPress={navigateToInfo}>
-          <Card.Content>
-            <Text variant="titleMedium">Thông tin</Text>
-            <Text variant="bodyMedium" style={{color: theme.colors.onSurfaceVariant}}>
-              Chi tiết cá nhân
-            </Text>
-          </Card.Content>
-        </Card>
+      <View style={styles.quickInfoContainer}>
+        <Surface style={styles.quickInfoCard} elevation={2}>
+          <Card
+            mode="contained"
+            onPress={navigateToInfo}>
+            <Card.Content style={styles.quickInfoContent}>
+              <MaterialCommunityIcons name="account-details" size={32} color={theme.colors.primary} />
+              <Text variant="titleMedium" style={styles.quickInfoTitle}>Thông tin</Text>
+              <Text variant="bodyMedium" style={styles.quickInfoSubtitle}>
+                Chi tiết cá nhân
+              </Text>
+            </Card.Content>
+          </Card>
+        </Surface>
 
-        <Card
-          style={[{width: '48%'}, margin.m1]}
-          onPress={navigateToChart}>
-          <Card.Content>
-            <Text variant="titleMedium">Sơ đồ</Text>
-            <Text variant="bodyMedium" style={{color: theme.colors.onSurfaceVariant}}>
-              Cấp quản lý
-            </Text>
-          </Card.Content>
-        </Card>
+        <Surface style={styles.quickInfoCard} elevation={2}>
+          <Card
+            mode="contained"
+            onPress={navigateToChart}>
+            <Card.Content style={styles.quickInfoContent}>
+              <MaterialCommunityIcons name="account-supervisor" size={32} color={theme.colors.primary} />
+              <Text variant="titleMedium" style={styles.quickInfoTitle}>Sơ đồ</Text>
+              <Text variant="bodyMedium" style={styles.quickInfoSubtitle}>
+                Cấp quản lý
+              </Text>
+            </Card.Content>
+          </Card>
+        </Surface>
       </View>
 
       {/* Contact Information */}
-      <Card style={[margin.m3, {backgroundColor: theme.colors.surface}]}>
-        <Card.Content>
-          <Text variant="titleMedium" style={margin.mb2}>
-            Thông tin liên hệ
-          </Text>
+      <Surface style={styles.contactCard} elevation={2}>
+        <View style={styles.contactContent}>
+          <View style={styles.contactHeader}>
+            <MaterialCommunityIcons name="card-account-details" size={24} color={theme.colors.primary} />
+            <Text variant="titleMedium" style={styles.contactTitle}>
+              Thông tin liên hệ
+            </Text>
+          </View>
           
-          <View style={margin.mb2}>
-            <Text variant="bodySmall" style={{color: theme.colors.onSurfaceVariant}}>
-              Email
-            </Text>
-            <Text variant="bodyLarge">{personalInfo.email}</Text>
+          <View style={styles.contactItem}>
+            <View style={styles.contactItemHeader}>
+              <MaterialCommunityIcons name="email" size={20} color={theme.colors.primary} />
+              <Text variant="bodySmall" style={styles.contactLabel}>
+                Email
+              </Text>
+            </View>
+            <Text variant="bodyLarge" style={styles.contactValue}>{personalInfo.email}</Text>
           </View>
 
-          <View style={margin.mb2}>
-            <Text variant="bodySmall" style={{color: theme.colors.onSurfaceVariant}}>
-              Số điện thoại
-            </Text>
-            <Text variant="bodyLarge">{personalInfo.phone}</Text>
+          <View style={styles.contactItem}>
+            <View style={styles.contactItemHeader}>
+              <MaterialCommunityIcons name="phone" size={20} color={theme.colors.primary} />
+              <Text variant="bodySmall" style={styles.contactLabel}>
+                Số điện thoại
+              </Text>
+            </View>
+            <Text variant="bodyLarge" style={styles.contactValue}>{personalInfo.phone}</Text>
           </View>
 
-          <View>
-            <Text variant="bodySmall" style={{color: theme.colors.onSurfaceVariant}}>
-              Ngày vào làm
-            </Text>
-            <Text variant="bodyLarge">{personalInfo.joinDate}</Text>
+          <View style={styles.contactItem}>
+            <View style={styles.contactItemHeader}>
+              <MaterialCommunityIcons name="calendar" size={20} color={theme.colors.primary} />
+              <Text variant="bodySmall" style={styles.contactLabel}>
+                Ngày vào làm
+              </Text>
+            </View>
+            <Text variant="bodyLarge" style={styles.contactValue}>{personalInfo.joinDate}</Text>
           </View>
-        </Card.Content>
-      </Card>
+        </View>
+      </Surface>
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#f5f5f5',
+  },
+  profileCard: {
+    margin: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  headerBackground: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    backgroundColor: '#1a73e8',
+  },
+  profileContent: {
+    padding: 16,
+  },
+  avatarContainer: {
+    borderRadius: 42,
+    padding: 2,
+    backgroundColor: '#fff',
+    marginRight: 16,
+  },
+  nameText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  positionText: {
+    color: 'rgba(255,255,255,0.95)',
+    fontWeight: '500',
+    fontSize: 16,
+    marginBottom: 2,
+  },
+  departmentText: {
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 14,
+  },
+  editButton: {
+    margin: 0,
+  },
+  quickInfoContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 8,
+    marginHorizontal: 8,
+    justifyContent: 'space-between',
+  },
+  quickInfoCard: {
+    width: '48%',
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  quickInfoContent: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  quickInfoTitle: {
+    marginTop: 12,
+    marginBottom: 4,
+    fontWeight: '600',
+  },
+  quickInfoSubtitle: {
+    color: 'rgba(0,0,0,0.6)',
+    textAlign: 'center',
+  },
+  contactCard: {
+    margin: 16,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+  },
+  contactContent: {
+    padding: 16,
+  },
+  contactHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  contactTitle: {
+    marginLeft: 8,
+    fontWeight: '600',
+  },
+  contactItem: {
+    marginBottom: 16,
+  },
+  contactItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  contactLabel: {
+    color: 'rgba(0,0,0,0.6)',
+    marginLeft: 8,
+  },
+  contactValue: {
+    marginLeft: 28,
+  },
+});
 
 export default PersonalDashboardScreen;
