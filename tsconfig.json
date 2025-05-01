@@ -1,7 +1,12 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "module": "es2020",
-    "jsx": "react-native"
+    "module": "Node16",
+    "jsx": "react-native",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node16",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

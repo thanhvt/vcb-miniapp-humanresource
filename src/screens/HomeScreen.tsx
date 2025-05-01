@@ -33,10 +33,10 @@ const HomeScreen = () => {
       style={styles.container}>
       <View style={styles.header}>
         <Text variant="titleLarge" style={styles.headerTitle}>
-          Trending
+          Xu hướng
         </Text>
         <Button mode="contained-tonal" onPress={showNotImplementedAlert}>
-          See All
+          Xem tất cả
         </Button>
       </View>
       <FlatList
