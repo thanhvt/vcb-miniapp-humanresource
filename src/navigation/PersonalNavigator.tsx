@@ -3,11 +3,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavBar from '../components/NavBar';
 
 // Import screens
-// These screens will be created later
-const PersonalDashboardScreen = () => <></>;
-const PersonalInfoScreen = () => <></>;
-const ManagementChartScreen = () => <></>;
-const EditProfileScreen = () => <></>;
+import PersonalDashboardScreen from '../screens/personal/PersonalDashboardScreen';
+import PersonalInfoScreen from '../screens/personal/PersonalInfoScreen';
+import ManagementChartScreen from '../screens/personal/ManagementChartScreen';
+import EditProfileScreen from '../screens/personal/EditProfileScreen';
 
 export type PersonalStackParamList = {
   PersonalDashboard: undefined;

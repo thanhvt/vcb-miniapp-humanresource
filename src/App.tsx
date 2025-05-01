@@ -1,7 +1,10 @@
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
+import {PaperProvider} from 'react-native-paper';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MainNavigator from './navigation/MainNavigator';
 import {hideSplashScreen} from './utils/bootSplash';
+import {theme} from './theme';
 
 const App = () => {
   useEffect(() => {
@@ -14,9 +17,13 @@ const App = () => {
   }, []);
 
   return (
-    <NavigationContainer>
-      <MainNavigator />
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <PaperProvider theme={theme}>
+        <NavigationContainer>
+          <MainNavigator />
+        </NavigationContainer>
+      </PaperProvider>
+    </SafeAreaProvider>
   );
 };
 
