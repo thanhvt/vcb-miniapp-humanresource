@@ -21,7 +21,7 @@ const PersonalNavigator = () => {
   return (
     <Personal.Navigator
       screenOptions={{
-        header: (props: any) => <NavBar {...props} />,
+        headerShown: false
       }}>
       <Personal.Screen 
         name="PersonalDashboard" 

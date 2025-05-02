@@ -4,9 +4,9 @@ import { Platform } from 'react-native';
 // VCB Brand Colors
 const colors = {
   // Primary colors
-  primary: '#004B93', // VCB Blue
-  primaryDark: '#003A73',
-  primaryLight: '#3373B0',
+  primary: '#4CAF50', // Light Green
+  primaryDark: '#388E3C',
+  primaryLight: '#81C784',
   
   // Secondary colors
   secondary: '#FFB81C', // VCB Gold

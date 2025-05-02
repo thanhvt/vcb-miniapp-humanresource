@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {ScrollView, View, StyleSheet, KeyboardAvoidingView, Platform, Animated} from 'react-native';
 import {TextInput, Button, Text, useTheme, HelperText, Avatar, IconButton, ProgressBar, Surface} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
-import {containers, layout, margin} from '../../theme';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {containers} from '../../theme';
 
 // Mock initial data - will be replaced with real API data later
 const initialFormData = {
@@ -25,9 +24,9 @@ interface FormErrors {
 }
 
 const EditProfileScreen = () => {
+  const theme = useTheme();
   const [scaleAnim] = useState(new Animated.Value(0));
   const [progressAnim] = useState(new Animated.Value(0));
-  const theme = useTheme();
   const navigation = useNavigation();
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -121,10 +120,14 @@ const EditProfileScreen = () => {
         {/* Header Section */}
         <Surface style={styles.header}>
           <View style={styles.avatarContainer}>
-            <Avatar.Image
-              size={80}
-              source={require('../../assets/default-avatar.png')}
-            />
+            <Surface style={styles.avatarSurface} elevation={4}>
+              <Avatar.Icon
+                size={80}
+                icon="account"
+                color="white"
+                style={{ backgroundColor: theme.colors.primary }}
+              />
+            </Surface>
             <IconButton
               icon="camera"
               size={20}
@@ -166,13 +169,7 @@ const EditProfileScreen = () => {
               onChangeText={handleChange('fullName')}
               mode="outlined"
               style={styles.input}
-              left={<TextInput.Icon icon={() => (
-                <MaterialCommunityIcons
-                  name="account"
-                  size={24}
-                  color={errors.fullName ? theme.colors.error : theme.colors.primary}
-                />
-              )}/>}
+              left={<TextInput.Icon icon={errors.fullName ? "alert-circle" : "account"} color={errors.fullName ? theme.colors.error : theme.colors.primary} />}
               error={!!errors.fullName}
             />
             <HelperText type="error" visible={!!errors.fullName}>
@@ -188,13 +185,7 @@ const EditProfileScreen = () => {
               onChangeText={handleChange('phone')}
               mode="outlined"
               style={styles.input}
-              left={<TextInput.Icon icon={() => (
-                <MaterialCommunityIcons
-                  name="phone"
-                  size={24}
-                  color={errors.phone ? theme.colors.error : theme.colors.primary}
-                />
-              )}/>}
+              left={<TextInput.Icon icon={errors.phone ? "alert-circle" : "phone"} color={errors.phone ? theme.colors.error : theme.colors.primary} />}
               keyboardType="phone-pad"
               error={!!errors.phone}
             />
@@ -211,13 +202,7 @@ const EditProfileScreen = () => {
               onChangeText={handleChange('address')}
               mode="outlined"
               style={styles.input}
-              left={<TextInput.Icon icon={() => (
-                <MaterialCommunityIcons
-                  name="map-marker"
-                  size={24}
-                  color={errors.address ? theme.colors.error : theme.colors.primary}
-                />
-              )}/>}
+              left={<TextInput.Icon icon={errors.address ? "alert-circle" : "map-marker"} color={errors.address ? theme.colors.error : theme.colors.primary} />}
               multiline
               numberOfLines={3}
               error={!!errors.address}
@@ -235,13 +220,7 @@ const EditProfileScreen = () => {
               onChangeText={handleChange('emergencyContact')}
               mode="outlined"
               style={styles.input}
-              left={<TextInput.Icon icon={() => (
-                <MaterialCommunityIcons
-                  name="account-alert"
-                  size={24}
-                  color={errors.emergencyContact ? theme.colors.error : theme.colors.primary}
-                />
-              )}/>}
+              left={<TextInput.Icon icon={errors.emergencyContact ? "alert-circle" : "account-alert"} color={errors.emergencyContact ? theme.colors.error : theme.colors.primary} />}
               placeholder="Tên (Quan hệ) - Số điện thoại"
               error={!!errors.emergencyContact}
             />
@@ -273,6 +252,10 @@ const EditProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  avatarSurface: {
+    borderRadius: 40,
+    overflow: 'hidden',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
