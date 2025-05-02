@@ -53,7 +53,11 @@ const Tabs = createBottomTabNavigator<TabsParamList>();
 const TabsNavigator = () => {
   const theme = useTheme();
   const {width} = Dimensions.get('window');
-  const tabWidth = width / 4; // 4 tabs
+  // Use window width for more precise calculations
+  // Account for the container padding (20px on each side)
+  const containerPadding = 40;
+  const usableWidth = width - containerPadding;
+  const tabWidth = usableWidth / 4; // 4 tabs exactly
   
   // Animation for the sliding indicator
   const slideAnim = useRef(new Animated.Value(0)).current;
@@ -61,10 +65,11 @@ const TabsNavigator = () => {
   // Animation for the gradient border
   const gradientAnim = useRef(new Animated.Value(0)).current;
   
-  // Store the current active tab index
+  // Store active tab index for reference
   const activeTabIndexRef = useRef(0);
   
   useEffect(() => {
+    // Start the gradient animation loop
     Animated.loop(
       Animated.timing(gradientAnim, {
         toValue: 1,
@@ -74,48 +79,46 @@ const TabsNavigator = () => {
     ).start();
   }, []);
   
-  // Helper function to animate the indicator to a specific tab index
+  // Helper function to precisely animate the indicator to the specified tab
   const animateToIndex = (index: number) => {
-    // Save the active index for reference
+    // Update reference to current active tab
     activeTabIndexRef.current = index;
     
-    // Animate the slider to the proper position
+    // Calculate exact position for the indicator
+    const position = index * tabWidth;
+    
+    // Use spring for natural movement with precise positioning
     Animated.spring(slideAnim, {
-      toValue: index * tabWidth,
+      toValue: position,
       useNativeDriver: true,
-      friction: 8,
-      tension: 100,
+      friction: 8, // Lower friction for faster animation
+      tension: 120, // Higher tension for more precision
+      velocity: 10, // Initial velocity for smoother start
     }).start();
   };
   
-  // Update the indicator position when navigation state changes
-  const onTabPress = (index: number) => {
-    animateToIndex(index);
-  };
-  
   // Create a custom tab bar component with the sliding indicator
+  // Custom tab bar component with precise indicator positioning
   const CustomTabBar = ({state, descriptors, navigation}: any) => {
-    // Set initial position of the indicator based on the active tab
+    // Update indicator position whenever the active tab changes
     useEffect(() => {
-      // Always animate to current tab index to ensure proper alignment
       animateToIndex(state.index);
     }, [state.index]);
     
-    // Set indicator position on initial render
+    // Set initial position when component mounts
     useEffect(() => {
       animateToIndex(state.index);
     }, []);
     
-    // Interpolate the animated value for gradient animation
-    // Wrap in try-catch to handle potential issues with interpolate
+    // Create animated gradient effect for visual feedback
     let gradientColors;
     try {
       gradientColors = gradientAnim.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: ['#4cff91', '#00e676', '#4cff91']
+        inputRange: [0, 0.14, 0.28, 0.42, 0.56, 0.7, 0.84, 1],
+        outputRange: ['#ff0000', '#ff8000', '#ffff00', '#00ff00', '#00ffff', '#0080ff', '#8000ff', '#ff0080']
       });
     } catch (error) {
-      // Fallback to a static color if interpolation fails
+      // Fallback if interpolation fails
       gradientColors = '#00e676';
     }
     
@@ -123,17 +126,95 @@ const TabsNavigator = () => {
       <View style={styles.tabBarOuterContainer}>
         <Animated.View style={[styles.tabBarBorder, {borderColor: gradientColors}]}>
           <View style={[styles.tabBarContainer, {alignItems: 'center'}]}>
-            {/* Sliding indicator */}
+            {/* Tab buttons row */}
+            <View style={styles.tabBar}>
+              {state.routes.map((route: any, index: number) => {
+                const {options} = descriptors[route.key];
+                const label = options.tabBarLabel ?? options.title ?? route.name;
+                const isFocused = state.index === index;
+                
+                // Animation for button press effect
+                const scaleAnim = useRef(new Animated.Value(1)).current;
+                
+                const onPressIn = () => {
+                  Animated.timing(scaleAnim, {
+                    toValue: 0.9,
+                    duration: 100,
+                    useNativeDriver: true,
+                  }).start();
+                };
+                
+                const onPressOut = () => {
+                  Animated.timing(scaleAnim, {
+                    toValue: 1,
+                    duration: 100,
+                    useNativeDriver: true,
+                  }).start();
+                };
+                
+                const onPress = () => {
+                  const event = navigation.emit({
+                    type: 'tabPress',
+                    target: route.key,
+                    canPreventDefault: true,
+                  });
+                  
+                  if (!isFocused && !event.defaultPrevented) {
+                    navigation.navigate(route.name);
+                  }
+                };
+                
+                return (
+                  <TouchableOpacity
+                    key={route.key}
+                    activeOpacity={1}
+                    accessibilityRole="button"
+                    accessibilityState={isFocused ? {selected: true} : {}}
+                    onPress={() => {
+                      onPress();
+                      animateToIndex(index);
+                    }}
+                    onPressIn={onPressIn}
+                    onPressOut={onPressOut}
+                    style={[
+                      styles.tabButton,
+                      isFocused && styles.tabButtonActive,
+                    ]}
+                  >
+                    <Animated.View style={{
+                      transform: [{scale: scaleAnim}],
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                      {options.tabBarIcon && options.tabBarIcon({
+                        focused: isFocused,
+                        color: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
+                        size: 24,
+                      })}
+                      <Text style={[
+                        styles.tabBarLabel,
+                        {color: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)'}
+                      ]}>
+                        {label}
+                      </Text>
+                    </Animated.View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            
+            {/* Sliding indicator with exact positioning */}
             <Animated.View 
               style={[
                 styles.slideIndicator, 
                 {
                   width: tabWidth,
+                  // The transform is the key to proper positioning
                   transform: [{translateX: slideAnim}],
                 }
               ]} 
             >
-              {/* Wrap LinearGradient in a try-catch at render time as well */}
+              {/* Use LinearGradient for the indicator */}
               {(() => {
                 try {
                   return (
@@ -145,99 +226,11 @@ const TabsNavigator = () => {
                     />
                   );
                 } catch (error) {
-                  // Fallback to a simple View with the first color
+                  // Fallback for when LinearGradient is unavailable
                   return <View style={[styles.indicatorGradient, {backgroundColor: '#00e676'}]} />;
                 }
               })()}
             </Animated.View>
-            {/* Tab buttons */}
-            <View style={styles.tabBar}>
-          {state.routes.map((route: any, index: number) => {
-            const {options} = descriptors[route.key];
-            const label = options.title || route.name;
-            const isFocused = state.index === index;
-            
-            // Animate the indicator when tab changes
-            useEffect(() => {
-              if (isFocused) {
-                Animated.spring(slideAnim, {
-                  toValue: index * tabWidth,
-                  useNativeDriver: true,
-                  friction: 8,
-                  tension: 50,
-                }).start();
-              }
-            }, [isFocused]);
-            
-            // Scale animation for press effect
-            const scaleAnim = useRef(new Animated.Value(1)).current;
-            
-            const onPressIn = () => {
-              Animated.timing(scaleAnim, {
-                toValue: 0.9,
-                duration: 150,
-                useNativeDriver: true,
-              }).start();
-            };
-            
-            const onPressOut = () => {
-              Animated.timing(scaleAnim, {
-                toValue: 1,
-                duration: 200,
-                useNativeDriver: true,
-              }).start();
-            };
-            
-            const onPress = () => {
-              const event = navigation.emit({
-                type: 'tabPress',
-                target: route.key,
-                canPreventDefault: true,
-              });
-
-              if (!isFocused && !event.defaultPrevented) {
-                navigation.navigate(route.name);
-              }
-            };
-            
-            return (
-              <TouchableOpacity
-                key={route.key}
-                activeOpacity={1}
-                accessibilityRole="button"
-                accessibilityState={isFocused ? {selected: true} : {}}
-                onPress={() => {
-                  onPress();
-                  onTabPress(index);
-                }}
-                onPressIn={onPressIn}
-                onPressOut={onPressOut}
-                style={[
-                  styles.tabButton,
-                  isFocused && styles.tabButtonActive,
-                ]}
-              >
-                <Animated.View style={{
-                  transform: [{scale: scaleAnim}],
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  {options.tabBarIcon && options.tabBarIcon({
-                    focused: isFocused,
-                    color: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
-                    size: 24,
-                  })}
-                  <Text style={[
-                    styles.tabBarLabel,
-                    {color: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)'}
-                  ]}>
-                    {label}
-                  </Text>
-                </Animated.View>
-              </TouchableOpacity>
-            );
-          })}
-            </View>
           </View>
         </Animated.View>
       </View>
@@ -304,7 +297,7 @@ const styles = StyleSheet.create({
   },
   tabBarBorder: {
     width: '100%',
-    borderRadius: 30,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#4CAF50', // Fixed border color for better visibility
     overflow: 'hidden',
@@ -312,7 +305,7 @@ const styles = StyleSheet.create({
       ios: {
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 4},
-        shadowOpacity: 0.3, // Increased shadow opacity
+        shadowOpacity: 0.5, // Increased shadow opacity
         shadowRadius: 8,
       },
       android: {
@@ -323,8 +316,10 @@ const styles = StyleSheet.create({
   tabBarContainer: {
     position: 'relative',
     height: 70,
-    borderRadius: 30,
-    backgroundColor: 'rgba(38, 50, 56, 0.95)', // Darker background for better contrast
+    borderRadius: 10,
+    // borderWidth: 2,
+    // opacity: 0.5,
+    backgroundColor: '#656667', // Darker background for better contrast
     overflow: 'hidden',
   },
   tabBar: {
@@ -334,8 +329,9 @@ const styles = StyleSheet.create({
   slideIndicator: {
     position: 'absolute',
     bottom: 0,
+    left: 0,
     height: 4,
-    width: '100%',
+    width: '25%', // Exactly 1/4 of container width
     zIndex: 1,
   },
   indicatorGradient: {
