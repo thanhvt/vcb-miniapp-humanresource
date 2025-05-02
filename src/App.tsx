@@ -5,6 +5,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MainNavigator from './navigation/MainNavigator';
 import {hideSplashScreen} from './utils/bootSplash';
 import {theme} from './theme';
+import {StatusBar, Platform, View} from 'react-native';
 
 const App = () => {
   useEffect(() => {
@@ -18,6 +19,11 @@ const App = () => {
 
   return (
     <SafeAreaProvider>
+      <StatusBar 
+        translucent={true}
+        backgroundColor="transparent"
+        barStyle="light-content"
+      />
       <PaperProvider theme={theme}>
         <NavigationContainer>
           <MainNavigator />
