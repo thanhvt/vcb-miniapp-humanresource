@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {ScrollView, View, StyleSheet, KeyboardAvoidingView, Platform, Animated} from 'react-native';
 import {TextInput, Button, Text, useTheme, HelperText, Avatar, IconButton, ProgressBar, Surface} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
-import {containers} from '../../theme';
+import {containers, margin} from '../../theme';
 
 // Mock initial data - will be replaced with real API data later
 const initialFormData = {
@@ -25,8 +25,10 @@ interface FormErrors {
 
 const EditProfileScreen = () => {
   const theme = useTheme();
-  const [scaleAnim] = useState(new Animated.Value(0));
-  const [progressAnim] = useState(new Animated.Value(0));
+  // Create separate animation values for native-driven animations
+  const [scaleAnim] = useState(new Animated.Value(0)); 
+  const [opacityAnim] = useState(new Animated.Value(0));
+  const [progressPercent, setProgressPercent] = useState(0); // Track progress with regular state
   const navigation = useNavigation();
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -58,21 +60,25 @@ const EditProfileScreen = () => {
   };
 
   useEffect(() => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      tension: 50,
-      friction: 7,
-    }).start();
+    // Run animations in parallel with the same native driver setting
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        tension: 50,
+        friction: 7,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      })
+    ]).start();
   }, []);
 
   useEffect(() => {
     const progress = calculateProgress();
-    Animated.timing(progressAnim, {
-      toValue: progress,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
+    setProgressPercent(Math.round(progress * 100));
   }, [formData]);
 
   const calculateProgress = () => {
@@ -146,10 +152,10 @@ const EditProfileScreen = () => {
         {/* Progress Section */}
         <View style={styles.progressContainer}>
           <Text variant="bodyMedium" style={styles.progressText}>
-            Hoàn thành hồ sơ: {Math.round((progressAnim as any)._value * 100)}%
+            Hoàn thành hồ sơ: {progressPercent}%
           </Text>
           <ProgressBar
-            progress={progressAnim as unknown as number}
+            progress={progressPercent / 100}
             color={theme.colors.primary}
           />
         </View>
@@ -158,7 +164,7 @@ const EditProfileScreen = () => {
             styles.form,
             {
               transform: [{scale: scaleAnim}],
-              opacity: scaleAnim,
+              opacity: opacityAnim,
             },
           ]}>
           {/* Full Name */}
@@ -259,6 +265,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    marginBottom: 84,
   },
   header: {
     padding: 16,

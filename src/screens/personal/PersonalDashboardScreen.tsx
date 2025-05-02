@@ -93,7 +93,7 @@ const PersonalDashboardScreen = () => {
               </View>
               
               {/* Edit button */}
-              {/* <IconButton
+              <IconButton
                 icon="pencil-outline"
                 mode="contained"
                 size={24}
@@ -101,7 +101,7 @@ const PersonalDashboardScreen = () => {
                 containerColor="#ffffff"
                 iconColor={"#0a6640"}
                 style={styles.editButton}
-              /> */}
+              />
             </View>
           </LinearGradient>
         </Surface>
