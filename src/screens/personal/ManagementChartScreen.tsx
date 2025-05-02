@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    marginBottom: 84,
   },
   searchContainer: {
     padding: 16,
@@ -54,11 +55,12 @@ const styles = StyleSheet.create({
   },
   roleIcon: {
     position: 'absolute',
-    right: -4,
-    top: -4,
+    right: 8,
+    top: 8,
     backgroundColor: '#fff',
     borderRadius: 12,
     elevation: 3,
+    zIndex: 1,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -347,4 +349,13 @@ const ManagementChartScreen = () => {
     </>);
 };
 
-export default ManagementChartScreen;
+// Wrap with PaperProvider to ensure context is available even when loaded through federation
+import PaperProviderWrapper from '../../providers/PaperProviderWrapper';
+
+const WrappedManagementChartScreen = () => (
+  <PaperProviderWrapper>
+    <ManagementChartScreen />
+  </PaperProviderWrapper>
+);
+
+export default WrappedManagementChartScreen;

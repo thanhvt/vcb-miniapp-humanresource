@@ -33,4 +33,14 @@ const App = () => {
   );
 };
 
+// Export the standard App component for standalone usage
 export default App;
+
+// Export a component that just provides the necessary context for federation
+export const AppWithProviders = ({children}: {children: React.ReactNode}) => {
+  return (
+    <PaperProvider theme={theme}>
+      {children}
+    </PaperProvider>
+  );
+};
