@@ -67,7 +67,7 @@ const PersonalDashboardScreen = () => {
                     style={styles.avatarGradient}>
                     <Avatar.Image
                       size={100}
-                      source={{uri: 'https://ui-avatars.com/api/?name=' + personalInfo.fullName + '&background=fff&color=0a4f6c&bold=true'}}
+                      source={{uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}}
                       style={styles.avatar}
                     />
                   </LinearGradient>
@@ -231,7 +231,8 @@ const PersonalDashboardScreen = () => {
 const createStyles = (theme: Theme) => StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // backgroundColor: '#052824',
+    backgroundColor: '#02451f',
+    marginBottom: 44,
   },
   backgroundGradient: {
     position: 'absolute',
@@ -240,6 +241,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   container: {
     flex: 1,
+    marginBottom: 44,
   },
   contentContainer: {
     paddingTop: StatusBar.currentHeight || 0,

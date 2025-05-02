@@ -289,9 +289,9 @@ const TabsNavigator = () => {
 const styles = StyleSheet.create({
   tabBarOuterContainer: {
     position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
+    bottom: 5,
+    left: 15,
+    right: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

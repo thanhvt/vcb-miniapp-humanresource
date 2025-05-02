@@ -13,6 +13,14 @@ const MainNavigator = () => {
     <Main.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: 'transparent',
+          zIndex: 999,
+        },
       }}>
       <Main.Screen name="Tabs" component={TabsNavigator} />
     </Main.Navigator>
