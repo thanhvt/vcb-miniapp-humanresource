@@ -3,6 +3,23 @@ import {StyleSheet, View, Text, TouchableOpacity, Animated, Platform, Dimensions
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// Import LinearGradient with a fallback mechanism to handle missing native module
+let LinearGradient: any;
+try {
+  LinearGradient = require('react-native-linear-gradient').default;
+} catch (error) {
+  // Fallback component when LinearGradient is not available
+  LinearGradient = ({ colors, style, children, start, end, ...props }: any) => {
+    // Use the first color from the colors array as the background color
+    const backgroundColor = Array.isArray(colors) ? colors[0] : '#00e676';
+    console.log('Using fallback LinearGradient with color:', backgroundColor);
+    return (
+      <View style={[style, { backgroundColor }]} {...props}>
+        {children}
+      </View>
+    );
+  };
+}
 import PersonalNavigator from './PersonalNavigator';
 import ContractNavigator from './ContractNavigator';
 import IncomeNavigator from './IncomeNavigator';
@@ -24,9 +41,9 @@ const getTabBarIcon = (name: string, focused: boolean, color: string) => {
   return (
     <Icon
       name={name}
-      size={focused ? 26 : 24}
+      size={focused ? 28 : 24}
       color={color}
-      style={focused ? {transform: [{translateY: -2}]} : {}}
+      style={focused ? {transform: [{translateY: -4}]} : {}}
     />
   );
 };
@@ -41,26 +58,103 @@ const TabsNavigator = () => {
   // Animation for the sliding indicator
   const slideAnim = useRef(new Animated.Value(0)).current;
   
+  // Animation for the gradient border
+  const gradientAnim = useRef(new Animated.Value(0)).current;
+  
+  // Store the current active tab index
+  const activeTabIndexRef = useRef(0);
+  
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(gradientAnim, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: false,
+      })
+    ).start();
+  }, []);
+  
+  // Helper function to animate the indicator to a specific tab index
+  const animateToIndex = (index: number) => {
+    // Save the active index for reference
+    activeTabIndexRef.current = index;
+    
+    // Animate the slider to the proper position
+    Animated.spring(slideAnim, {
+      toValue: index * tabWidth,
+      useNativeDriver: true,
+      friction: 8,
+      tension: 100,
+    }).start();
+  };
+  
+  // Update the indicator position when navigation state changes
+  const onTabPress = (index: number) => {
+    animateToIndex(index);
+  };
+  
   // Create a custom tab bar component with the sliding indicator
   const CustomTabBar = ({state, descriptors, navigation}: any) => {
+    // Set initial position of the indicator based on the active tab
+    useEffect(() => {
+      // Always animate to current tab index to ensure proper alignment
+      animateToIndex(state.index);
+    }, [state.index]);
+    
+    // Set indicator position on initial render
+    useEffect(() => {
+      animateToIndex(state.index);
+    }, []);
+    
+    // Interpolate the animated value for gradient animation
+    // Wrap in try-catch to handle potential issues with interpolate
+    let gradientColors;
+    try {
+      gradientColors = gradientAnim.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: ['#4cff91', '#00e676', '#4cff91']
+      });
+    } catch (error) {
+      // Fallback to a static color if interpolation fails
+      gradientColors = '#00e676';
+    }
+    
     return (
-      <View style={[styles.tabBarContainer, {backgroundColor: theme.colors.surface}]}>
-        {/* Sliding indicator */}
-        <Animated.View 
-          style={[
-            styles.slideIndicator, 
-            {
-              width: tabWidth,
-              transform: [{translateX: slideAnim}],
-              backgroundColor: theme.colors.primaryContainer,
-            }
-          ]} 
-        />
-        {/* Tab buttons */}
-        <View style={styles.tabBar}>
+      <View style={styles.tabBarOuterContainer}>
+        <Animated.View style={[styles.tabBarBorder, {borderColor: gradientColors}]}>
+          <View style={[styles.tabBarContainer, {alignItems: 'center'}]}>
+            {/* Sliding indicator */}
+            <Animated.View 
+              style={[
+                styles.slideIndicator, 
+                {
+                  width: tabWidth,
+                  transform: [{translateX: slideAnim}],
+                }
+              ]} 
+            >
+              {/* Wrap LinearGradient in a try-catch at render time as well */}
+              {(() => {
+                try {
+                  return (
+                    <LinearGradient
+                      colors={['#4cff91', '#00e676', '#4cff91']}
+                      start={{x: 0, y: 0}}
+                      end={{x: 1, y: 0}}
+                      style={styles.indicatorGradient}
+                    />
+                  );
+                } catch (error) {
+                  // Fallback to a simple View with the first color
+                  return <View style={[styles.indicatorGradient, {backgroundColor: '#00e676'}]} />;
+                }
+              })()}
+            </Animated.View>
+            {/* Tab buttons */}
+            <View style={styles.tabBar}>
           {state.routes.map((route: any, index: number) => {
             const {options} = descriptors[route.key];
-            const label = options.tabBarLabel || options.title || route.name;
+            const label = options.title || route.name;
             const isFocused = state.index === index;
             
             // Animate the indicator when tab changes
@@ -112,9 +206,12 @@ const TabsNavigator = () => {
                 activeOpacity={1}
                 accessibilityRole="button"
                 accessibilityState={isFocused ? {selected: true} : {}}
+                onPress={() => {
+                  onPress();
+                  onTabPress(index);
+                }}
                 onPressIn={onPressIn}
                 onPressOut={onPressOut}
-                onPress={onPress}
                 style={[
                   styles.tabButton,
                   isFocused && styles.tabButtonActive,
@@ -127,22 +224,22 @@ const TabsNavigator = () => {
                 }}>
                   {options.tabBarIcon && options.tabBarIcon({
                     focused: isFocused,
-                    color: isFocused ? theme.colors.primary : theme.colors.outline,
+                    color: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)',
                     size: 24,
                   })}
-                  {options.tabBarLabel && (
-                    <Text style={[
-                      styles.tabBarLabel,
-                      {color: isFocused ? theme.colors.primary : theme.colors.outline}
-                    ]}>
-                      {label}
-                    </Text>
-                  )}
+                  <Text style={[
+                    styles.tabBarLabel,
+                    {color: isFocused ? '#ffffff' : 'rgba(255,255,255,0.7)'}
+                  ]}>
+                    {label}
+                  </Text>
                 </Animated.View>
               </TouchableOpacity>
             );
           })}
-        </View>
+            </View>
+          </View>
+        </Animated.View>
       </View>
     );
   };
@@ -152,8 +249,12 @@ const TabsNavigator = () => {
       tabBar={(props: any) => <CustomTabBar {...props} />}
       screenOptions={({route}: {route: {name: string}}) => ({
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.outline,
+        tabBarActiveTintColor: '#ffffff', // Bright white for active items
+        tabBarInactiveTintColor: '#B0BEC5', // Lighter gray for inactive items
+        tabBarStyle: {
+          opacity: 0, // Hide the default tab bar completely
+          height: 0
+        }
       })}>
 
       <Tabs.Screen
@@ -193,21 +294,38 @@ const TabsNavigator = () => {
 };
 
 const styles = StyleSheet.create({
-  tabBarContainer: {
-    position: 'relative',
-    borderTopWidth: 0,
-    height: 70,
+  tabBarOuterContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabBarBorder: {
+    width: '100%',
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: '#4CAF50', // Fixed border color for better visibility
+    overflow: 'hidden',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: -2},
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.3, // Increased shadow opacity
+        shadowRadius: 8,
       },
       android: {
-        elevation: 8,
+        elevation: 10, // Increased elevation
       },
     }),
+  },
+  tabBarContainer: {
+    position: 'relative',
+    height: 70,
+    borderRadius: 30,
+    backgroundColor: 'rgba(38, 50, 56, 0.95)', // Darker background for better contrast
+    overflow: 'hidden',
   },
   tabBar: {
     flexDirection: 'row',
@@ -216,15 +334,18 @@ const styles = StyleSheet.create({
   slideIndicator: {
     position: 'absolute',
     bottom: 0,
-    height: 5,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    height: 4,
+    width: '100%',
     zIndex: 1,
+  },
+  indicatorGradient: {
+    height: '100%',
+    width: '100%',
   },
   tabBarLabel: {
     fontSize: 12,
-    fontWeight: '600',
-    marginTop: 4,
+    fontWeight: '700', // Bolder text
+    marginTop: 2, // Reduced space for better alignment
     textAlign: 'center',
   },
   tabButton: {
@@ -235,7 +356,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   tabButtonActive: {
-    backgroundColor: 'rgba(76, 175, 80, 0.1)', // Light green background for active tab
+    backgroundColor: 'rgba(76, 175, 80, 0.25)', // Increased opacity for better visibility
   },
   header: {
     backgroundColor: '#fff',
