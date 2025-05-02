@@ -13,12 +13,13 @@ const colors = {
   secondaryDark: '#D99B00',
   secondaryLight: '#FFC64D',
   
-  // Neutral colors
-  background: '#FFFFFF',
-  surface: '#F5F5F5',
+  // Neutral colors with green tint
+  background: '#F1F8E9', // Lightest green background
+  surface: '#E8F5E9', // Light green surface
+  surfaceVariant: '#C8E6C9', // Slightly darker green surface
   text: '#1A1A1A',
-  textSecondary: '#666666',
-  border: '#E0E0E0',
+  textSecondary: '#2E7D32', // Dark green for secondary text
+  border: '#A5D6A7', // Medium green for borders
   
   // Status colors
   success: '#2E7D32',
@@ -340,11 +341,8 @@ export const theme = {
 };
 
 // Type definition for the theme
-export type AppTheme = typeof theme;
+import type {MD3Theme} from 'react-native-paper';
 
-// Custom hook to use theme types
-declare global {
-  namespace ReactNativePaper {
-    interface Theme extends AppTheme {}
-  }
-}
+export type Theme = MD3Theme;
+
+export const appTheme = theme;

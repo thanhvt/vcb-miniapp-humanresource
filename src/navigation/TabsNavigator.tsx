@@ -1,7 +1,7 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useRef, useEffect} from 'react';
+import {StyleSheet, View, Text, TouchableOpacity, Animated, Platform, Dimensions} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {MD3Colors, useTheme} from 'react-native-paper';
+import {useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PersonalNavigator from './PersonalNavigator';
 import ContractNavigator from './ContractNavigator';
@@ -22,9 +22,12 @@ interface TabBarIconProps {
 
 const getTabBarIcon = (name: string, focused: boolean, color: string) => {
   return (
-    <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
-      <Icon name={name} size={24} color={color} />
-    </View>
+    <Icon
+      name={name}
+      size={focused ? 26 : 24}
+      color={color}
+      style={focused ? {transform: [{translateY: -2}]} : {}}
+    />
   );
 };
 
@@ -32,17 +35,127 @@ const Tabs = createBottomTabNavigator<TabsParamList>();
 
 const TabsNavigator = () => {
   const theme = useTheme();
+  const {width} = Dimensions.get('window');
+  const tabWidth = width / 4; // 4 tabs
+  
+  // Animation for the sliding indicator
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  
+  // Create a custom tab bar component with the sliding indicator
+  const CustomTabBar = ({state, descriptors, navigation}: any) => {
+    return (
+      <View style={[styles.tabBarContainer, {backgroundColor: theme.colors.surface}]}>
+        {/* Sliding indicator */}
+        <Animated.View 
+          style={[
+            styles.slideIndicator, 
+            {
+              width: tabWidth,
+              transform: [{translateX: slideAnim}],
+              backgroundColor: theme.colors.primaryContainer,
+            }
+          ]} 
+        />
+        {/* Tab buttons */}
+        <View style={styles.tabBar}>
+          {state.routes.map((route: any, index: number) => {
+            const {options} = descriptors[route.key];
+            const label = options.tabBarLabel || options.title || route.name;
+            const isFocused = state.index === index;
+            
+            // Animate the indicator when tab changes
+            useEffect(() => {
+              if (isFocused) {
+                Animated.spring(slideAnim, {
+                  toValue: index * tabWidth,
+                  useNativeDriver: true,
+                  friction: 8,
+                  tension: 50,
+                }).start();
+              }
+            }, [isFocused]);
+            
+            // Scale animation for press effect
+            const scaleAnim = useRef(new Animated.Value(1)).current;
+            
+            const onPressIn = () => {
+              Animated.timing(scaleAnim, {
+                toValue: 0.9,
+                duration: 150,
+                useNativeDriver: true,
+              }).start();
+            };
+            
+            const onPressOut = () => {
+              Animated.timing(scaleAnim, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+              }).start();
+            };
+            
+            const onPress = () => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
+
+              if (!isFocused && !event.defaultPrevented) {
+                navigation.navigate(route.name);
+              }
+            };
+            
+            return (
+              <TouchableOpacity
+                key={route.key}
+                activeOpacity={1}
+                accessibilityRole="button"
+                accessibilityState={isFocused ? {selected: true} : {}}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
+                onPress={onPress}
+                style={[
+                  styles.tabButton,
+                  isFocused && styles.tabButtonActive,
+                ]}
+              >
+                <Animated.View style={{
+                  transform: [{scale: scaleAnim}],
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {options.tabBarIcon && options.tabBarIcon({
+                    focused: isFocused,
+                    color: isFocused ? theme.colors.primary : theme.colors.outline,
+                    size: 24,
+                  })}
+                  {options.tabBarLabel && (
+                    <Text style={[
+                      styles.tabBarLabel,
+                      {color: isFocused ? theme.colors.primary : theme.colors.outline}
+                    ]}>
+                      {label}
+                    </Text>
+                  )}
+                </Animated.View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+    );
+  };
 
   return (
     <Tabs.Navigator
-      screenOptions={{
+      tabBar={(props: any) => <CustomTabBar {...props} />}
+      screenOptions={({route}: {route: {name: string}}) => ({
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: 'rgba(0,0,0,0.6)',
-        tabBarStyle: styles.tabBar,
-        tabBarLabelStyle: styles.tabBarLabel,
-        tabBarItemStyle: styles.tabBarItem,
-      }}>
+        tabBarInactiveTintColor: theme.colors.outline,
+      })}>
+
       <Tabs.Screen
         name="PersonalNavigator"
         component={PersonalNavigator}
@@ -80,36 +193,49 @@ const TabsNavigator = () => {
 };
 
 const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: '#fff',
+  tabBarContainer: {
+    position: 'relative',
     borderTopWidth: 0,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    height: 60,
-    paddingBottom: 8,
-    paddingTop: 8,
+    height: 70,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: -2},
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  tabBar: {
+    flexDirection: 'row',
+    height: '100%',
+  },
+  slideIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    height: 5,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    zIndex: 1,
   },
   tabBarLabel: {
     fontSize: 12,
-    fontWeight: '500',
-    marginTop: 2,
+    fontWeight: '600',
+    marginTop: 4,
+    textAlign: 'center',
   },
-  tabBarItem: {
-    height: 44,
-  },
-  iconContainer: {
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
+  tabButton: {
+    flex: 1,
     alignItems: 'center',
-    borderRadius: 22,
-    marginBottom: -8,
+    justifyContent: 'center',
+    paddingVertical: 8,
+    position: 'relative',
   },
-  iconContainerActive: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
+  tabButtonActive: {
+    backgroundColor: 'rgba(76, 175, 80, 0.1)', // Light green background for active tab
   },
   header: {
     backgroundColor: '#fff',

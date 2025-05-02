@@ -1,6 +1,7 @@
 import React from 'react';
-import {ScrollView, View, StyleSheet, Dimensions} from 'react-native';
+import {ScrollView, View, StyleSheet, Dimensions, Platform} from 'react-native';
 import {Avatar, Card, Text, IconButton, useTheme, Surface} from 'react-native-paper';
+import type {Theme} from '../../theme/theme';
 import {useNavigation} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {PersonalStackParamList} from '../../navigation/PersonalNavigator';
@@ -23,6 +24,7 @@ const personalInfo = {
 
 const PersonalDashboardScreen = () => {
   const theme = useTheme();
+  const styles = React.useMemo(() => createStyles(theme), [theme]);
   const navigation = useNavigation<NavigationProp>();
   const screenWidth = Dimensions.get('window').width;
 
@@ -37,7 +39,7 @@ const PersonalDashboardScreen = () => {
       
       {/* Profile Summary Card */}
       <Surface style={styles.profileCard} elevation={2}>
-          <View style={[styles.headerBackground, { backgroundColor: theme.colors.primary }]}>
+          <View style={[styles.headerBackground, { backgroundColor: '#81C784' }]}>
             <View style={styles.profileContent}>
               <View style={[layout.row, layout.alignCenter]}>
             <Surface style={styles.avatarContainer} elevation={4}>
@@ -145,14 +147,15 @@ const PersonalDashboardScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background,
   },
   profileCard: {
     margin: 16,
     borderRadius: 16,
     overflow: 'hidden',
+    backgroundColor: theme.colors.surface,
   },
   headerBackground: {
     borderTopLeftRadius: 16,
@@ -166,31 +169,34 @@ const styles = StyleSheet.create({
   avatarContainer: {
     borderRadius: 42,
     padding: 3,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: theme.colors.surface,
     marginRight: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   nameText: {
-    color: '#fff',
+    color: '#1A1A1A',
     fontWeight: '600',
     fontSize: 24,
     marginBottom: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: {width: 0, height: 1},
-    textShadowRadius: 2,
   },
   positionText: {
-    color: '#E8F5E9',
+    color: '#2E7D32',
     fontWeight: '500',
     fontSize: 16,
     marginBottom: 2,
   },
   departmentText: {
-    color: '#C8E6C9',
+    color: '#388E3C',
     fontSize: 14,
   },
   editButton: {
@@ -208,10 +214,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 16,
     overflow: 'hidden',
+    backgroundColor: theme.colors.surface,
   },
   quickInfoContent: {
     padding: 16,
     alignItems: 'center',
+    backgroundColor: theme.colors.surface,
   },
   quickInfoTitle: {
     marginTop: 12,
@@ -219,13 +227,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   quickInfoSubtitle: {
-    color: 'rgba(0,0,0,0.6)',
+    color: theme.colors.onSurfaceVariant,
     textAlign: 'center',
   },
   contactCard: {
     margin: 16,
     borderRadius: 16,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.surface,
   },
   contactContent: {
     padding: 16,
@@ -248,7 +256,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   contactLabel: {
-    color: 'rgba(0,0,0,0.6)',
+    color: theme.colors.onSurfaceVariant,
     marginLeft: 8,
   },
   contactValue: {
