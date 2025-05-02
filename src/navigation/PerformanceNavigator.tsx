@@ -37,9 +37,10 @@ const Performance = createNativeStackNavigator<PerformanceStackParamList>();
 const PerformanceNavigator = () => {
   return (
     <Performance.Navigator
-      screenOptions={{
-        header: (props: any) => <NavBar {...props} />,
-      }}>
+      // screenOptions={{
+      //   header: (props: any) => <NavBar {...props} />,
+      // }}
+      >
       <Performance.Screen 
         name="PerformanceDashboard" 
         component={PerformanceDashboardScreen} 

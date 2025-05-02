@@ -21,9 +21,10 @@ const Income = createNativeStackNavigator<IncomeStackParamList>();
 const IncomeNavigator = () => {
   return (
     <Income.Navigator
-      screenOptions={{
-        header: (props: any) => <NavBar {...props} />,
-      }}>
+      // screenOptions={{
+      //   header: (props: any) => <NavBar {...props} />,
+      // }}
+      >
       <Income.Screen 
         name="IncomeDashboard" 
         component={IncomeDashboardScreen} 
