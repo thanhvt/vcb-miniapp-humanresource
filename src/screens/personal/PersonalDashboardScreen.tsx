@@ -59,6 +59,15 @@ const PersonalDashboardScreen = () => {
             end={{x: 1, y: 0}} 
             style={styles.headerBackground}>
             <View style={styles.profileContent}>
+            <IconButton
+                icon="account-edit"
+                mode="contained"
+                size={24}
+                onPress={navigateToEdit}
+                containerColor="#ffffff"
+                iconColor={"#0a6640"}
+                style={styles.utilityButton}
+              />
               {/* Avatar section */}
               <View style={styles.avatarSection}>
                 <Surface style={styles.avatarContainer} elevation={4}>
@@ -358,6 +367,23 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     position: 'absolute',
     top: 20,
     right: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  utilityButton: {
+    margin: 0,
+    position: 'absolute',
+    top: 20,
+    left: 20,
     ...Platform.select({
       ios: {
         shadowColor: '#000',

@@ -9,7 +9,7 @@ const initialFormData = {
   fullName: 'Nguyễn Văn A',
   phone: '0912345678',
   address: '198 Trần Quang Khải, Hoàn Kiếm, Hà Nội',
-  emergencyContact: 'Nguyễn Văn B (Vợ/Chồng) - 0987654321',
+  emergencyContact: 'Nguyễn Văn B (Vợ/Chồng)',
 };
 
 interface FormData {
@@ -234,7 +234,7 @@ const EditProfileScreen = () => {
               {errors.emergencyContact}
             </HelperText>
             <HelperText type="info" visible={true}>
-              Ví dụ: Nguyễn Văn B (Vợ/Chồng) - 0987654321
+              Ví dụ: Nguyễn Văn B (Vợ/Chồng)
             </HelperText>
           </View>
         </Animated.View>

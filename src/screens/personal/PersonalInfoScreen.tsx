@@ -26,7 +26,7 @@ const personalInfo = {
     email: 'nguyenvana@vcb.com.vn',
     phone: '0912345678',
     address: '198 Trần Quang Khải, Hoàn Kiếm, Hà Nội',
-    emergencyContact: 'Nguyễn Văn B (Vợ/Chồng) - 0987654321',
+    emergencyContact: 'Nguyễn Văn B (Vợ/Chồng)',
   },
   education: {
     degree: 'Thạc sĩ',
