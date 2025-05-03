@@ -187,6 +187,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    marginBottom: 64,
   },
   backgroundGradient: {
     position: 'absolute',

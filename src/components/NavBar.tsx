@@ -6,7 +6,7 @@ const NavBar = ({navigation, back, route, options}: NativeStackHeaderProps) => {
   return (
     <Appbar.Header elevated>
       {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
-      <Appbar.Content title={options.title ?? route.name} />
+      <Appbar.Content title={options?.title ?? route?.name ?? 'Screen'} />
     </Appbar.Header>
   );
 };

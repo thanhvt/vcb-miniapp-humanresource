@@ -3,11 +3,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavBar from '../components/NavBar';
 
 // Import screens
-// These screens will be created later
-const IncomeDashboardScreen = () => <></>;
-const MonthlyPayslipScreen = () => <></>;
-const YearlyIncomeScreen = () => <></>;
-const IncomeDetailsScreen = () => <></>;
+import IncomeDashboardScreen from '../screens/income/IncomeDashboardScreen';
+import MonthlyPayslipScreen from '../screens/income/MonthlyPayslipScreen';
+import YearlyIncomeScreen from '../screens/income/YearlyIncomeScreen';
+import IncomeDetailsScreen from '../screens/income/IncomeDetailsScreen';
 
 export type IncomeStackParamList = {
   IncomeDashboard: undefined;
@@ -22,7 +21,7 @@ const IncomeNavigator = () => {
   return (
     <Income.Navigator
       // screenOptions={{
-      //   header: (props: any) => <NavBar {...props} />,
+      //   headerShown: false
       // }}
       >
       <Income.Screen 

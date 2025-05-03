@@ -209,7 +209,7 @@ const ContractDetailsScreen = () => {
             </Button>
             
             <Button 
-              mode="outlined" 
+              mode="contained" 
               icon="eye-outline"
               style={[styles.actionButton, styles.secondaryButton]}
               contentStyle={styles.actionButtonContent}
@@ -218,7 +218,7 @@ const ContractDetailsScreen = () => {
             </Button>
             
             <Button 
-              mode="outlined" 
+              mode="contained" 
               icon="share-variant"
               style={[styles.actionButton, styles.secondaryButton]}
               contentStyle={styles.actionButtonContent}
@@ -265,6 +265,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    marginBottom: 64,
   },
   backgroundGradient: {
     position: 'absolute',
