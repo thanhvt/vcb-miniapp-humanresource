@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
-import {ScrollView, View, StyleSheet, Platform, TouchableOpacity, FlatList, StatusBar, SafeAreaView} from 'react-native';
+import {ScrollView, View, StyleSheet, Platform, TouchableOpacity, FlatList, SafeAreaView, StatusBar as RNStatusBar} from 'react-native';
+import {SafeStatusBar as StatusBar} from '../../utils/SafeModules';
 import {Text, useTheme, Surface, Divider} from 'react-native-paper';
 import type {Theme} from '../../theme/theme';
 import * as ReactNavigation from '@react-navigation/native';
@@ -59,9 +60,7 @@ const ContractHistoryScreen = () => {
     
     return () => {
       StatusBar.setBarStyle('default');
-      if (Platform.OS === 'android') {
-        StatusBar.setTranslucent(false);
-      }
+      StatusBar.setTranslucent(false);
     };
   }, []);
   
@@ -142,7 +141,7 @@ const ContractHistoryScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <RNStatusBar backgroundColor="transparent" barStyle="dark-content" />
       <View style={styles.mainContainer}>
         <LinearGradient 
         colors={[

@@ -5,7 +5,7 @@
  * giữa ứng dụng chính và các micro-apps trong kiến trúc micro-frontend.
  */
 import React from 'react';
-import { View, NativeModules, Text } from 'react-native';
+import { View, NativeModules, Text, StatusBar, Platform } from 'react-native';
 
 /**
  * Check if a specific native module is already registered
@@ -61,4 +61,59 @@ export const SafeLinearGradient = (props: LinearGradientProps) => {
   
   // Fallback to a simple View
   return <View style={props.style}>{props.children}</View>;
+};
+
+/**
+ * SafeStatusBar - phiên bản an toàn của StatusBar
+ * 
+ * Cung cấp các phương thức an toàn cho StatusBar, xử lý các phương thức
+ * chỉ khả dụng trên một nền tảng cụ thể (như setTranslucent chỉ có trên Android)
+ * 
+ * Sử dụng:
+ * import { SafeStatusBar as StatusBar } from '../utils/SafeModules';
+ */
+export const SafeStatusBar = {
+  // Không sử dụng ...StatusBar vì có thể gây ra vấn đề với các phương thức
+  // Thay vào đó, triển khai rõ ràng các phương thức cần thiết
+  
+  /**
+   * setBarStyle - Phương thức an toàn cho StatusBar.setBarStyle
+   */
+  setBarStyle: (style: 'default' | 'light-content' | 'dark-content', animated?: boolean): void => {
+    StatusBar.setBarStyle(style, animated);
+  },
+  
+  /**
+   * setBackgroundColor - Phương thức an toàn cho StatusBar.setBackgroundColor
+   */
+  setBackgroundColor: (color: string, animated?: boolean): void => {
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor(color, animated);
+    }
+    // Bỏ qua trên iOS vì không hỗ trợ
+  },
+  
+  /**
+   * setTranslucent - Phương thức an toàn cho StatusBar.setTranslucent
+   * Chỉ gọi trên Android, bỏ qua trên iOS
+   */
+  setTranslucent: (translucent: boolean): void => {
+    if (Platform.OS === 'android') {
+      StatusBar.setTranslucent(translucent);
+    }
+    // Bỏ qua trên iOS vì không hỗ trợ
+  },
+  
+  /**
+   * setHidden - Phương thức an toàn cho StatusBar.setHidden
+   */
+  setHidden: (hidden: boolean, animation?: 'none' | 'fade' | 'slide'): void => {
+    StatusBar.setHidden(hidden, animation);
+  },
+  
+  /**
+   * Thêm các phương thức an toàn khác nếu cần
+   */
+  // Các thuộc tính tĩnh cần thiết
+  currentHeight: StatusBar.currentHeight
 };

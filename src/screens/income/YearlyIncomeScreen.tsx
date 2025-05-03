@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, StatusBar, SafeAreaView, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, SafeAreaView, Platform, Dimensions, StatusBar as RNStatusBar } from 'react-native';
+import { SafeStatusBar as StatusBar } from '../../utils/SafeModules';
 import { Text, Card, DataTable, Button, Divider, useTheme } from 'react-native-paper';
-import { Dimensions } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IncomeStackParamList } from '../../navigation/IncomeNavigator';
@@ -98,15 +98,13 @@ const YearlyIncomeScreen = () => {
     
     return () => {
       StatusBar.setBarStyle('default');
-      if (Platform.OS === 'android') {
-        StatusBar.setTranslucent(false);
-      }
+      StatusBar.setTranslucent(false);
     };
   }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <RNStatusBar backgroundColor="transparent" barStyle="dark-content" />
       <View style={styles.mainContainer}>
         <LinearGradient 
           colors={[

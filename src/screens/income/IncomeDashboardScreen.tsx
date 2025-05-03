@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Platform, StatusBar as RNStatusBar } from 'react-native';
+import { SafeStatusBar as StatusBar } from '../../utils/SafeModules';
 import { Text, Card, Button, Divider, useTheme } from 'react-native-paper';
 import CustomBarChart from '../../components/CustomBarChart';
 import { Dimensions } from 'react-native';
@@ -83,15 +84,13 @@ const IncomeDashboardScreen = () => {
     
     return () => {
       StatusBar.setBarStyle('default');
-      if (Platform.OS === 'android') {
-        StatusBar.setTranslucent(false);
-      }
+      StatusBar.setTranslucent(false);
     };
   }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <RNStatusBar backgroundColor="transparent" barStyle="dark-content" />
       <View style={styles.mainContainer}>
         <LinearGradient 
           colors={[
