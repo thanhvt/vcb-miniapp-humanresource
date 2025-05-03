@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Platform } from 'react-native';
 import { Text, Card, Button, Divider, useTheme } from 'react-native-paper';
 import { BarChart } from 'react-native-gifted-charts';
 import { Dimensions } from 'react-native';
@@ -8,6 +8,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IncomeStackParamList } from '../../navigation/IncomeNavigator';
 import { chartData, monthlyIncomes, yearlyIncomes } from '../../utils/mock/incomeData';
 import NavBar from '../../components/NavBar';
+import { SafeLinearGradient as LinearGradient } from '../../utils/SafeModules';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Props = NativeStackNavigationProp<IncomeStackParamList>;
 
@@ -18,7 +21,7 @@ const IncomeDashboardScreen = () => {
   
   // Format currency to VND
   const formatCurrency = (amount: number) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ' VNĐ';
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   const screenWidth = Dimensions.get('window').width - 32;
@@ -27,9 +30,9 @@ const IncomeDashboardScreen = () => {
   const monthlyChartData = chartData.last6Months.map(item => ({
     value: item.amount/1000000,
     label: item.month,
-    frontColor: theme.colors.primary,
+    frontColor: '#0a6640',
     topLabelComponent: () => (
-      <Text style={{ fontSize: 10, color: theme.colors.primary, marginBottom: 4 }}>
+      <Text style={{ fontSize: 10, color: '#0a6640', marginBottom: 4 }}>
         {Math.round(item.amount/1000000)}
       </Text>
     )
@@ -39,9 +42,9 @@ const IncomeDashboardScreen = () => {
   const yearlyChartData = chartData.lastYears.map(item => ({
     value: item.amount/1000000,
     label: item.year,
-    frontColor: theme.colors.primary,
+    frontColor: '#0a6640',
     topLabelComponent: () => (
-      <Text style={{ fontSize: 10, color: theme.colors.primary, marginBottom: 4 }}>
+      <Text style={{ fontSize: 10, color: '#0a6640', marginBottom: 4 }}>
         {Math.round(item.amount/1000000)}
       </Text>
     )
@@ -65,10 +68,42 @@ const IncomeDashboardScreen = () => {
   const currentMonthIncome = monthlyIncomes[0];
   const currentYearIncome = yearlyIncomes[0];
 
+  // Set status bar config
+  useEffect(() => {
+    StatusBar.setBarStyle('dark-content');
+    StatusBar.setTranslucent(true);
+    
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor('transparent');
+    }
+    
+    return () => {
+      StatusBar.setBarStyle('default');
+      if (Platform.OS === 'android') {
+        StatusBar.setTranslucent(false);
+      }
+    };
+  }, []);
+
   return (
-    <View style={styles.container}>
-      {/* <NavBar title="Thu nhập" showBackButton={false} /> */}
-      <ScrollView style={styles.scrollView}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <View style={styles.mainContainer}>
+        <LinearGradient 
+          colors={[
+            '#85c625', 
+            '#0a6640', 
+            '#16d8c1',
+            '#16d8c1'
+          ]} 
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          style={styles.backgroundGradient} />
+      
+      <ScrollView 
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}>
         <Card style={styles.summaryCard}>
           <Card.Title title="Tổng quan thu nhập" />
           <Card.Content>
@@ -142,7 +177,7 @@ const IncomeDashboardScreen = () => {
                 width={screenWidth}
                 height={220}
                 {...barChartConfig}
-                frontColor={theme.colors.primary}
+                frontColor="#0a6640"
                 noOfSections={5}
                 maxValue={viewType === 'month' ? 30 : 300}
               />
@@ -158,6 +193,7 @@ const IncomeDashboardScreen = () => {
               mode="contained"
               icon="file-document"
               style={styles.button}
+              buttonColor="#0a6640"
               onPress={() => navigation.navigate('MonthlyPayslip')}>
               Payslip tháng này
             </Button>
@@ -166,6 +202,8 @@ const IncomeDashboardScreen = () => {
               mode="outlined"
               icon="calendar"
               style={styles.button}
+              textColor="#0a6640"
+              rippleColor="rgba(10, 102, 64, 0.2)"
               onPress={() => navigation.navigate('MonthlyPayslip')}>
               Xem payslip tháng khác
             </Button>
@@ -174,26 +212,99 @@ const IncomeDashboardScreen = () => {
               mode="outlined"
               icon="chart-line"
               style={styles.button}
+              textColor="#0a6640"
+              rippleColor="rgba(10, 102, 64, 0.2)"
               onPress={() => navigation.navigate('YearlyIncome')}>
               Tổng thu nhập năm
             </Button>
           </Card.Content>
         </Card>
       </ScrollView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    marginBottom: 64,
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+  },
   container: {
     flex: 1,
   },
-  scrollView: {
-    flex: 1,
+  contentContainer: {
     padding: 16,
+    paddingTop: 20,
   },
   summaryCard: {
     marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
+  },
+  chartCard: {
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
+  },
+  actionsCard: {
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
   },
   toggleContainer: {
     flexDirection: 'row',
@@ -228,10 +339,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   netAmount: {
-    color: 'green',
-  },
-  chartCard: {
-    marginBottom: 16,
+    color: '#0a6640',
   },
   chartNote: {
     fontSize: 12,
@@ -239,9 +347,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginTop: 4,
   },
-  actionsCard: {
-    marginBottom: 16,
-  },
+
   button: {
     marginVertical: 8,
   },
@@ -253,7 +359,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewDetailsText: {
-    color: '#0066cc',
+    color: '#0a6640',
     fontWeight: 'bold',
   },
 });

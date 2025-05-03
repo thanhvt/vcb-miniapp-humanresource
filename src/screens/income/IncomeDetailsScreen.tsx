@@ -41,7 +41,7 @@ const IncomeDetailsScreen = () => {
   
   // Format currency to VND
   const formatCurrency = (amount: number) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ' VNĐ';
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
   
   // Group income details by type
@@ -184,6 +184,7 @@ const IncomeDetailsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: 64,
   },
   scrollView: {
     flex: 1,

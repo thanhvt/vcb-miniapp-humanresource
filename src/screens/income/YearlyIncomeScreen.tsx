@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, StatusBar, SafeAreaView, Platform } from 'react-native';
 import { Text, Card, DataTable, Button, Divider, useTheme } from 'react-native-paper';
 import { PieChart } from 'react-native-gifted-charts';
 import { Dimensions } from 'react-native';
@@ -8,6 +8,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IncomeStackParamList } from '../../navigation/IncomeNavigator';
 import { yearlyIncomes, Income } from '../../utils/mock/incomeData';
 import NavBar from '../../components/NavBar';
+import { SafeLinearGradient as LinearGradient } from '../../utils/SafeModules';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Props = NativeStackNavigationProp<IncomeStackParamList>;
 type RouteProps = RouteProp<IncomeStackParamList, 'YearlyIncome'>;
@@ -24,7 +27,7 @@ const YearlyIncomeScreen = () => {
   
   // Format currency to VND
   const formatCurrency = (amount: number) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ' VNĐ';
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   // Group income details by type
@@ -54,8 +57,8 @@ const YearlyIncomeScreen = () => {
   // Random color generator for chart
   function getRandomColor(index: number) {
     const colors = [
-      '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28AFF', 
-      '#FF6B6B', '#4BC0C0', '#9775FA', '#F78FB3', '#18DCFF'
+      '#0a6640', '#85c625', '#16d8c1', '#4BC0C0', '#A28AFF', 
+      '#FF6B6B', '#00C49F', '#9775FA', '#F78FB3', '#18DCFF'
     ];
     return colors[index % colors.length];
   }
@@ -84,10 +87,42 @@ const YearlyIncomeScreen = () => {
     );
   };
 
+  // Set status bar config
+  useEffect(() => {
+    StatusBar.setBarStyle('dark-content');
+    StatusBar.setTranslucent(true);
+    
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor('transparent');
+    }
+    
+    return () => {
+      StatusBar.setBarStyle('default');
+      if (Platform.OS === 'android') {
+        StatusBar.setTranslucent(false);
+      }
+    };
+  }, []);
+
   return (
-    <View style={styles.container}>
-      {/* <NavBar title={`Thu nhập năm ${year}`} /> */}
-      <ScrollView style={styles.scrollView}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <View style={styles.mainContainer}>
+        <LinearGradient 
+          colors={[
+            '#85c625', 
+            '#0a6640', 
+            '#16d8c1',
+            '#16d8c1'
+          ]} 
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          style={styles.backgroundGradient} />
+      
+      <ScrollView 
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}>
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.yearlyTitle}>TỔNG THU NHẬP NĂM {year}</Text>
@@ -209,6 +244,7 @@ const YearlyIncomeScreen = () => {
               icon="calendar"
               onPress={() => setYearSelectorVisible(!yearSelectorVisible)}
               style={styles.button}
+              buttonColor="#0a6640"
             >
               Chọn năm khác
             </Button>
@@ -219,6 +255,8 @@ const YearlyIncomeScreen = () => {
               icon="file-download"
               onPress={() => {}}
               style={styles.button}
+              textColor="#0a6640"
+              rippleColor="rgba(10, 102, 64, 0.2)"
             >
               Tải báo cáo
             </Button>
@@ -228,26 +266,61 @@ const YearlyIncomeScreen = () => {
               icon="chart-bar"
               onPress={() => navigation.navigate('MonthlyPayslip')}
               style={styles.button}
+              textColor="#0a6640"
+              rippleColor="rgba(10, 102, 64, 0.2)"
             >
               Xem Payslip tháng
             </Button>
           </Card.Content>
         </Card>
       </ScrollView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    marginBottom: 64,
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+  },
   container: {
     flex: 1,
   },
-  scrollView: {
-    flex: 1,
+  contentContainer: {
     padding: 16,
+    paddingTop: 20,
   },
   card: {
     marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
   },
   yearlyTitle: {
     fontSize: 18,
@@ -276,10 +349,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   deductionAmount: {
-    color: 'red',
+    color: '#d32f2f',
   },
   netAmount: {
-    color: 'green',
+    color: '#0a6640',
   },
   chartContainer: {
     alignItems: 'center',
@@ -301,6 +374,22 @@ const styles = StyleSheet.create({
   },
   actionsCard: {
     marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
   },
   button: {
     marginVertical: 8,

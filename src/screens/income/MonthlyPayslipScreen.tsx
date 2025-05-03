@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, StatusBar, SafeAreaView, Platform } from 'react-native';
 import { Text, Card, DataTable, Button, Divider, useTheme } from 'react-native-paper';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IncomeStackParamList } from '../../navigation/IncomeNavigator';
 import { monthlyIncomes, Income, IncomeDetail } from '../../utils/mock/incomeData';
 import NavBar from '../../components/NavBar';
+import { SafeLinearGradient as LinearGradient } from '../../utils/SafeModules';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type Props = NativeStackNavigationProp<IncomeStackParamList>;
 type RouteProps = RouteProp<IncomeStackParamList, 'MonthlyPayslip'>;
@@ -25,7 +28,7 @@ const MonthlyPayslipScreen = () => {
   
   // Format currency to VND
   const formatCurrency = (amount: number) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ' VNĐ';
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   // Group income details by type
@@ -79,10 +82,42 @@ const MonthlyPayslipScreen = () => {
     );
   };
 
+  // Set status bar config
+  useEffect(() => {
+    StatusBar.setBarStyle('dark-content');
+    StatusBar.setTranslucent(true);
+    
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor('transparent');
+    }
+    
+    return () => {
+      StatusBar.setBarStyle('default');
+      if (Platform.OS === 'android') {
+        StatusBar.setTranslucent(false);
+      }
+    };
+  }, []);
+
   return (
-    <View style={styles.container}>
-      {/* <NavBar title={`Payslip tháng ${month}/${year}`} /> */}
-      <ScrollView style={styles.scrollView}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <View style={styles.mainContainer}>
+        <LinearGradient 
+          colors={[
+            '#85c625', 
+            '#0a6640', 
+            '#16d8c1',
+            '#16d8c1'
+          ]} 
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          style={styles.backgroundGradient} />
+      
+      <ScrollView 
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}>
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.payslipTitle}>PAYSLIP THÁNG {month}/{year}</Text>
@@ -168,6 +203,7 @@ const MonthlyPayslipScreen = () => {
               icon="calendar"
               onPress={() => setMonthsVisible(!monthsVisible)}
               style={styles.button}
+              buttonColor="#0a6640"
             >
               Chọn tháng khác
             </Button>
@@ -178,6 +214,8 @@ const MonthlyPayslipScreen = () => {
               icon="file-download"
               onPress={() => {}}
               style={styles.button}
+              textColor="#0a6640"
+              rippleColor="rgba(10, 102, 64, 0.2)"
             >
               Tải Payslip
             </Button>
@@ -187,26 +225,61 @@ const MonthlyPayslipScreen = () => {
               icon="chart-bar"
               onPress={() => navigation.navigate('YearlyIncome')}
               style={styles.button}
+              textColor="#0a6640"
+              rippleColor="rgba(10, 102, 64, 0.2)"
             >
               Xem thu nhập năm
             </Button>
           </Card.Content>
         </Card>
       </ScrollView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    marginBottom: 64,
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+  },
   container: {
     flex: 1,
   },
-  scrollView: {
-    flex: 1,
+  contentContainer: {
     padding: 16,
+    paddingTop: 20,
   },
   card: {
     marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
   },
   payslipTitle: {
     fontSize: 18,
@@ -235,10 +308,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   deductionAmount: {
-    color: 'red',
+    color: '#d32f2f',
   },
   netAmount: {
-    color: 'green',
+    color: '#0a6640',
   },
   sectionTitle: {
     fontSize: 16,
@@ -256,6 +329,22 @@ const styles = StyleSheet.create({
   },
   actionsCard: {
     marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
   },
   button: {
     marginVertical: 8,
