@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Card, Button, Divider, useTheme } from 'react-native-paper';
-import { BarChart } from 'react-native-chart-kit';
+import { BarChart } from 'react-native-gifted-charts';
 import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,30 +23,41 @@ const IncomeDashboardScreen = () => {
 
   const screenWidth = Dimensions.get('window').width - 32;
 
-  const monthlyChartData = {
-    labels: chartData.last6Months.map(item => item.month),
-    datasets: [
-      {
-        data: chartData.last6Months.map(item => item.amount/1000000),
-      },
-    ],
-  };
+  // Prepare data for monthly bar chart
+  const monthlyChartData = chartData.last6Months.map(item => ({
+    value: item.amount/1000000,
+    label: item.month,
+    frontColor: theme.colors.primary,
+    topLabelComponent: () => (
+      <Text style={{ fontSize: 10, color: theme.colors.primary, marginBottom: 4 }}>
+        {Math.round(item.amount/1000000)}
+      </Text>
+    )
+  }));
 
-  const yearlyChartData = {
-    labels: chartData.lastYears.map(item => item.year),
-    datasets: [
-      {
-        data: chartData.lastYears.map(item => item.amount/1000000),
-      },
-    ],
-  };
+  // Prepare data for yearly bar chart
+  const yearlyChartData = chartData.lastYears.map(item => ({
+    value: item.amount/1000000,
+    label: item.year,
+    frontColor: theme.colors.primary,
+    topLabelComponent: () => (
+      <Text style={{ fontSize: 10, color: theme.colors.primary, marginBottom: 4 }}>
+        {Math.round(item.amount/1000000)}
+      </Text>
+    )
+  }));
 
-  const chartConfig = {
-    backgroundGradientFrom: theme.colors.background,
-    backgroundGradientTo: theme.colors.background,
-    color: () => theme.colors.primary,
-    barPercentage: 0.7,
-    decimalPlaces: 0,
+  // Bar chart configuration
+  const barChartConfig = {
+    spacing: 30,
+    barWidth: 22,
+    roundedTop: true,
+    roundedBottom: false,
+    hideRules: true,
+    yAxisTextStyle: { color: 'gray' },
+    xAxisLabelTextStyle: { color: 'gray', textAlign: 'center', fontSize: 10 },
+    showFractionalValues: false,
+    hideYAxisText: true,
   };
 
   const currentMonth = new Date().getMonth() + 1;
@@ -125,16 +136,17 @@ const IncomeDashboardScreen = () => {
         <Card style={styles.chartCard}>
           <Card.Title title={viewType === 'month' ? "Thu nhập 6 tháng gần đây" : "Thu nhập 5 năm gần đây"} />
           <Card.Content>
-            <BarChart
-              data={viewType === 'month' ? monthlyChartData : yearlyChartData}
-              width={screenWidth}
-              height={220}
-              chartConfig={chartConfig}
-              yAxisSuffix=" tr"
-              fromZero={true}
-              showBarTops={true}
-              verticalLabelRotation={30}
-            />
+            <View style={{ paddingVertical: 10 }}>
+              <BarChart
+                data={viewType === 'month' ? monthlyChartData : yearlyChartData}
+                width={screenWidth}
+                height={220}
+                {...barChartConfig}
+                frontColor={theme.colors.primary}
+                noOfSections={5}
+                maxValue={viewType === 'month' ? 30 : 300}
+              />
+            </View>
             <Text style={styles.chartNote}>Đơn vị: triệu đồng</Text>
           </Card.Content>
         </Card>

@@ -24,13 +24,21 @@ let RealLinearGradient: any = null;
 
 // Try to use preloaded module from host app
 try {
-  // The host app should have already registered the native module
-  if (isNativeModuleRegistered('BVLinearGradient')) {
+  // Check for both possible native module names
+  // 'BVLinearGradient' is the native module name for react-native-linear-gradient
+  // 'RNLinearGradient' is an alternative name that might be used
+  if (isNativeModuleRegistered('BVLinearGradient') || isNativeModuleRegistered('RNLinearGradient')) {
     RealLinearGradient = require('react-native-linear-gradient').default;
-  } else if (__DEV__) {
-    // In development, we might still want to import it directly
-    console.warn('BVLinearGradient not registered by host. Using direct import in DEV mode.');
-    RealLinearGradient = require('react-native-linear-gradient').default;
+    console.log('Successfully loaded LinearGradient from native module');
+  } else {
+    // Always try direct import as fallback
+    console.warn('LinearGradient native module not found. Trying direct import.');
+    try {
+      RealLinearGradient = require('react-native-linear-gradient').default;
+      console.log('Successfully loaded LinearGradient through direct import');
+    } catch (importError) {
+      console.warn('Direct import of LinearGradient failed:', importError);
+    }
   }
 } catch (e) {
   console.warn('Could not load LinearGradient:', e);

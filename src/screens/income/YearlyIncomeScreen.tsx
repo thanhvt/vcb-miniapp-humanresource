@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Card, DataTable, Button, Divider, useTheme } from 'react-native-paper';
-import { PieChart } from 'react-native-chart-kit';
+import { PieChart } from 'react-native-gifted-charts';
 import { Dimensions } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -44,11 +44,11 @@ const YearlyIncomeScreen = () => {
 
   // Prepare data for pie chart
   const earningData = earnings.map((item, index) => ({
-    name: item.name,
-    amount: item.amount,
+    value: item.amount,
+    text: `${Math.round((item.amount / totalEarnings) * 100)}%`,
     color: getRandomColor(index),
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 12,
+    label: item.name,
+    textColor: 'black',
   }));
 
   // Random color generator for chart
@@ -119,15 +119,22 @@ const YearlyIncomeScreen = () => {
             <View style={styles.chartContainer}>
               <PieChart
                 data={earningData}
-                width={screenWidth}
-                height={220}
-                chartConfig={{
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                donut
+                showGradient
+                sectionAutoFocus
+                radius={90}
+                innerRadius={60}
+                focusOnPress
+                textSize={12}
+                textBackgroundRadius={26}
+                centerLabelComponent={() => {
+                  return (
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                      <Text style={{fontSize: 14, color: 'gray'}}>Tổng thu nhập</Text>
+                      <Text style={{fontSize: 16, fontWeight: 'bold'}}>{formatCurrency(totalEarnings)}</Text>
+                    </View>
+                  );
                 }}
-                accessor="amount"
-                backgroundColor="transparent"
-                paddingLeft="15"
-                absolute
               />
             </View>
             

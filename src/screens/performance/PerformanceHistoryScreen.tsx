@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { Text, Card, Button, Divider, useTheme, List, Chip, FAB } from 'react-native-paper';
-import { LineChart } from 'react-native-chart-kit';
+import { LineChart } from 'react-native-gifted-charts';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -27,32 +27,39 @@ const PerformanceHistoryScreen = () => {
   
   const screenWidth = Dimensions.get('window').width - 32;
   
-  // Prepare chart data
-  const chartData = {
-    labels: filteredData.slice(0, 6).map(score => {
-      if (periodType === 'month') {
-        const [month, year] = score.period.split('-');
-        return `${month}/${year.slice(2)}`;
-      } else {
-        return score.period;
-      }
-    }).reverse(),
-    datasets: [
-      {
-        data: filteredData.slice(0, 6).map(score => score.score).reverse(),
-        color: () => theme.colors.primary,
-        strokeWidth: 2,
-      }
-    ],
-    legend: ['Điểm PMS']
-  };
+  // Prepare chart data for gifted-charts
+  const chartData = filteredData.slice(0, 6).map(score => {
+    let label;
+    if (periodType === 'month') {
+      const [month, year] = score.period.split('-');
+      label = `${month}/${year.slice(2)}`;
+    } else {
+      label = score.period;
+    }
+    
+    return {
+      value: score.score,
+      label: label,
+      dataPointText: score.score.toString(),
+    };
+  }).reverse();
   
-  const chartConfig = {
-    backgroundGradientFrom: theme.colors.background,
-    backgroundGradientTo: theme.colors.background,
-    color: (opacity = 1) => theme.colors.primary,
-    strokeWidth: 2,
-    decimalPlaces: 1,
+  // Line chart configuration for gifted-charts
+  const lineChartConfig = {
+    spacing: 40,
+    color: theme.colors.primary,
+    thickness: 2,
+    dataPointsColor: theme.colors.primary,
+    dataPointsRadius: 5,
+    initialSpacing: 20,
+    endSpacing: 20,
+    showFractionalValues: true,
+    hideRules: true,
+    hideYAxisText: false,
+    yAxisColor: 'lightgray',
+    yAxisTextStyle: { color: 'gray' },
+    xAxisColor: 'lightgray',
+    xAxisTextStyle: { color: 'gray', textAlign: 'center', fontSize: 10 },
   };
   
   // Format period for display
@@ -121,13 +128,13 @@ const PerformanceHistoryScreen = () => {
               data={chartData}
               width={screenWidth}
               height={220}
-              chartConfig={chartConfig}
-              bezier
-              style={styles.chart}
-              fromZero
-              yAxisSuffix=""
-              yAxisInterval={1}
-              verticalLabelRotation={30}
+              {...lineChartConfig}
+              curved
+              isAnimated
+              animationDuration={1000}
+              maxValue={5}
+              noOfSections={5}
+              yAxisLabelTexts={['0', '1', '2', '3', '4', '5']}
             />
           </Card.Content>
         </Card>
