@@ -156,11 +156,13 @@ const ContractHistoryScreen = () => {
       
       <View style={styles.container}>
         <Surface style={styles.header} elevation={3}>
-          <View style={styles.headerContent}>
-            <MaterialCommunityIcons name="history" size={24} color="#fff" />
-            <Text style={styles.headerTitle}>
-              Lịch sử hợp đồng ({sortedContracts.length})
-            </Text>
+          <View style={styles.headerInner}>
+            <View style={styles.headerContent}>
+              <MaterialCommunityIcons name="history" size={24} color="#fff" />
+              <Text style={styles.headerTitle}>
+                Lịch sử hợp đồng ({sortedContracts.length})
+              </Text>
+            </View>
           </View>
         </Surface>
         
@@ -217,6 +219,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
         elevation: 6,
       },
     }),
+  },
+  headerInner: {
+    overflow: 'hidden',
+    borderRadius: 16,
   },
   headerContent: {
     flexDirection: 'row',
