@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { Text, Card, Button, Divider, useTheme, List } from 'react-native-paper';
-import { LineChart } from 'react-native-gifted-charts';
+import CustomLineChart from '../../components/CustomLineChart';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { PerformanceStackParamList } from '../../navigation/PerformanceNavigator';
@@ -38,23 +38,8 @@ const PerformanceDashboardScreen = () => {
     };
   }).reverse();
   
-  // Line chart configuration
-  const lineChartConfig = {
-    spacing: 40,
-    color: theme.colors.primary,
-    thickness: 2,
-    dataPointsColor: theme.colors.primary,
-    dataPointsRadius: 5,
-    initialSpacing: 20,
-    endSpacing: 20,
-    showFractionalValues: true,
-    hideRules: true,
-    hideYAxisText: false,
-    yAxisColor: 'lightgray',
-    yAxisTextStyle: { color: 'gray' },
-    xAxisColor: 'lightgray',
-    xAxisTextStyle: { color: 'gray', textAlign: 'center', fontSize: 10 },
-  };
+  // Chart color from theme
+  const chartColor = theme.colors.primary;
   
   // Get rating color based on score
   const getRatingColor = (score: number) => {
@@ -85,7 +70,7 @@ const PerformanceDashboardScreen = () => {
 
   return (
     <View style={styles.container}>
-      <NavBar title="Hiệu suất" showBackButton={false} />
+      {/* <NavBar title="Hiệu suất" showBackButton={false} /> */}
       <ScrollView style={styles.scrollView}>
         <Card style={styles.summaryCard}>
           <Card.Title title="Tổng quan hiệu suất" />
@@ -194,18 +179,15 @@ const PerformanceDashboardScreen = () => {
             title={viewType === 'quarter' ? "Xu hướng PMS theo quý" : "Xu hướng PMS theo tháng"} 
           />
           <Card.Content>
-            <LineChart
-              data={viewType === 'quarter' ? quarterlyData : monthlyData}
-              width={screenWidth}
-              height={220}
-              {...lineChartConfig}
-              curved
-              isAnimated
-              animationDuration={1000}
-              maxValue={5}
-              noOfSections={5}
-              yAxisLabelTexts={['0', '1', '2', '3', '4', '5']}
-            />
+              <CustomLineChart
+                data={viewType === 'quarter' ? quarterlyData : monthlyData}
+                width={screenWidth}
+                height={220}
+                color={chartColor}
+                maxValue={5}
+                noOfSections={5}
+                yAxisLabelTexts={['0', '1', '2', '3', '4', '5']}
+              />
             <Button 
               mode="text" 
               onPress={() => navigation.navigate('PerformanceHistory', { 
@@ -297,6 +279,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 16,
+    marginBottom: 64,
   },
   summaryCard: {
     marginBottom: 16,

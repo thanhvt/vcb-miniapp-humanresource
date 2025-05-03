@@ -1,7 +1,8 @@
 /**
  * patchGiftedCharts.js
  * 
- * This script patches the react-native-gifted-charts library to use our custom LinearGradient wrapper
+ * This script patches the react-native-gifted-charts library to use our custom wrappers
+ * for LinearGradient and SVG components
  */
 
 const fs = require('fs');
@@ -13,35 +14,46 @@ const linearGradientPath = path.resolve(
   '../../node_modules/react-native-gifted-charts/dist/Components/common/LinearGradient.js'
 );
 
-// Our custom implementation
-const patchedContent = `
+// Note: We're only patching LinearGradient since we're using a custom SafePieChart component
+// that doesn't rely on SVG components
+
+// Our custom LinearGradient implementation
+const patchedLinearGradientContent = `
 // Patched by patchGiftedCharts.js
-var LinearGradient;
+import React from 'react';
+import { View } from 'react-native';
+
+// Fallback LinearGradient component
+const FallbackLinearGradient = ({ style, children, colors = ['#fff', '#fff'] }) => {
+  return (
+    <View style={[style, { backgroundColor: colors[0] }]}>
+      {children}
+    </View>
+  );
+};
+
+// Try different ways to get LinearGradient
+let LinearGradient;
 
 try {
-  // Use our custom wrapper that handles both react-native-linear-gradient and expo-linear-gradient
-  LinearGradient = require('../../../src/utils/GradientWrapper').LinearGradient;
-  console.log('Successfully loaded LinearGradient from custom wrapper');
+  // First try direct import
+  LinearGradient = require('react-native-linear-gradient').default;
+  console.log('Successfully loaded LinearGradient from react-native-linear-gradient');
 } catch (error) {
-  console.warn('Failed to load custom LinearGradient wrapper:', error);
-  
-  // Fallback to original implementation
   try {
-    LinearGradient = require('react-native-linear-gradient').default;
-    console.log('Successfully loaded LinearGradient from react-native-linear-gradient');
+    // Try expo version
+    LinearGradient = require('expo-linear-gradient').LinearGradient;
+    console.log('Successfully loaded LinearGradient from expo-linear-gradient');
   } catch (error) {
-    try {
-      LinearGradient = require('expo-linear-gradient').LinearGradient;
-      console.log('Successfully loaded LinearGradient from expo-linear-gradient');
-    } catch (error) {
-      console.error('Error: Linear gradient is not installed', error);
-    }
+    // Use fallback
+    LinearGradient = FallbackLinearGradient;
+    console.log('Using fallback LinearGradient component');
   }
 }
 
 export default LinearGradient;
 `;
 
-// Write the patched file
-fs.writeFileSync(linearGradientPath, patchedContent);
+// Write the patched LinearGradient file
+fs.writeFileSync(linearGradientPath, patchedLinearGradientContent);
 console.log(`Patched ${linearGradientPath}`);

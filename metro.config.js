@@ -15,8 +15,13 @@ module.exports = (async () => {
     resolver: {
       ...defaultConfig.resolver,
       sourceExts: ['jsx', 'js', 'ts', 'tsx', 'json', 'cjs', 'mjs'],
+      blockList: [
+        // Block the problematic PieChart module from react-native-gifted-charts
+        /node_modules\/react-native-gifted-charts\/dist\/PieChart\/.*/,
+      ],
       extraNodeModules: {
-        // Add any modules that need special handling here
+        // Provide empty implementations for problematic modules
+        'react-native-svg': require.resolve('./src/components/EmptySvg'),
       },
     },
     transformer: {

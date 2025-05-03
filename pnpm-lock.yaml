@@ -47,9 +47,6 @@ importers:
       react-native-fs:
         specifier: ^2.20.0
         version: 2.20.0(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))
-      react-native-gifted-charts:
-        specifier: ^1.4.60
-        version: 1.4.60(react-native-linear-gradient@2.8.3(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0))(react-native-svg@15.11.2(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0))(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
       react-native-linear-gradient:
         specifier: ^2.8.3
         version: 2.8.3(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
@@ -3119,12 +3116,6 @@ packages:
     resolution: {integrity: sha512-7yetJWqbS9sbn0vIfliPsFgoXMKn/YMF+Wuiog97x+urnSRRRZ7xB+uVkwGKzRgq9CDFfMQnE9ruL5DHv9c6Xg==}
     engines: {node: '>=6'}
 
-  gifted-charts-core@0.1.62:
-    resolution: {integrity: sha512-b3fweez3P+RojgC3BDpetC+rivvuKSvDtA9ydvnvxbfBoB6tOVEbY5Vq4tEGiLmt9XOBOJpRTJiFTgYtr0NreA==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-
   github-from-package@0.0.0:
     resolution: {integrity: sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw==}
 
@@ -4494,20 +4485,6 @@ packages:
       react-native-windows: '*'
     peerDependenciesMeta:
       react-native-windows:
-        optional: true
-
-  react-native-gifted-charts@1.4.60:
-    resolution: {integrity: sha512-cdbFSj8/kCxAw4yeJEOuZC4f4Fk9fdjNYSsS20OdyKqflmjVKl06NgMEZagTKFWNXX6TRHI5X9J2Ovk9P0DSPg==}
-    peerDependencies:
-      expo-linear-gradient: '*'
-      react: '*'
-      react-native: '*'
-      react-native-linear-gradient: '*'
-      react-native-svg: '*'
-    peerDependenciesMeta:
-      expo-linear-gradient:
-        optional: true
-      react-native-linear-gradient:
         optional: true
 
   react-native-is-edge-to-edge@1.1.7:
@@ -9388,11 +9365,6 @@ snapshots:
 
   getenv@1.0.0: {}
 
-  gifted-charts-core@0.1.62(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0):
-    dependencies:
-      react: 19.0.0
-      react-native: 0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0)
-
   github-from-package@0.0.0: {}
 
   glob-parent@5.1.2:
@@ -11092,15 +11064,6 @@ snapshots:
       base-64: 0.1.0
       react-native: 0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0)
       utf8: 3.0.0
-
-  react-native-gifted-charts@1.4.60(react-native-linear-gradient@2.8.3(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0))(react-native-svg@15.11.2(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0))(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0):
-    dependencies:
-      gifted-charts-core: 0.1.62(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
-      react: 19.0.0
-      react-native: 0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0)
-      react-native-svg: 15.11.2(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
-    optionalDependencies:
-      react-native-linear-gradient: 2.8.3(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
 
   react-native-is-edge-to-edge@1.1.7(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0):
     dependencies:

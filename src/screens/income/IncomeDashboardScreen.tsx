@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, StatusBar, SafeAreaView, Platform } from 'react-native';
 import { Text, Card, Button, Divider, useTheme } from 'react-native-paper';
-import { BarChart } from 'react-native-gifted-charts';
+import CustomBarChart from '../../components/CustomBarChart';
 import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -51,16 +51,20 @@ const IncomeDashboardScreen = () => {
   }));
 
   // Bar chart configuration
-  const barChartConfig = {
+  const barChartStyles = {
     spacing: 30,
     barWidth: 22,
     roundedTop: true,
     roundedBottom: false,
-    hideRules: true,
-    yAxisTextStyle: { color: 'gray' },
-    xAxisLabelTextStyle: { color: 'gray', textAlign: 'center', fontSize: 10 },
+    hideRules: false,
+    rulesColor: 'rgba(10, 102, 64, 0.15)',
+    rulesThickness: 1,
+    yAxisTextStyle: { color: '#666', fontSize: 10 },
+    xAxisLabelTextStyle: { color: '#666', textAlign: 'center', fontSize: 10, fontWeight: 'bold' },
     showFractionalValues: false,
-    hideYAxisText: true,
+    hideYAxisText: false,
+    initialSpacing: 10,
+    endSpacing: 10,
   };
 
   const currentMonth = new Date().getMonth() + 1;
@@ -171,18 +175,31 @@ const IncomeDashboardScreen = () => {
         <Card style={styles.chartCard}>
           <Card.Title title={viewType === 'month' ? "Thu nhập 6 tháng gần đây" : "Thu nhập 5 năm gần đây"} />
           <Card.Content>
-            <View style={{ paddingVertical: 10 }}>
-              <BarChart
-                data={viewType === 'month' ? monthlyChartData : yearlyChartData}
-                width={screenWidth}
-                height={220}
-                {...barChartConfig}
-                frontColor="#0a6640"
-                noOfSections={5}
-                maxValue={viewType === 'month' ? 30 : 300}
-              />
+            <View style={styles.chartWrapper}>
+              <View style={styles.chartContainer}>
+                <CustomBarChart
+                  data={viewType === 'month' ? monthlyChartData : yearlyChartData}
+                  width={screenWidth}
+                  height={220}
+                  spacing={barChartStyles.spacing}
+                  barWidth={barChartStyles.barWidth}
+                  roundedTop={barChartStyles.roundedTop}
+                  roundedBottom={barChartStyles.roundedBottom}
+                  hideRules={barChartStyles.hideRules}
+                  rulesColor={barChartStyles.rulesColor}
+                  rulesThickness={barChartStyles.rulesThickness}
+                  yAxisTextStyle={barChartStyles.yAxisTextStyle}
+                  xAxisLabelTextStyle={barChartStyles.xAxisLabelTextStyle}
+                  showFractionalValues={barChartStyles.showFractionalValues}
+                  hideYAxisText={barChartStyles.hideYAxisText}
+                  initialSpacing={barChartStyles.initialSpacing}
+                  endSpacing={barChartStyles.endSpacing}
+                  maxValue={viewType === 'month' ? 30 : 400}
+                  noOfSections={5}
+                />
+                <Text style={styles.chartNote}>Đơn vị: triệu đồng</Text>
+              </View> 
             </View>
-            <Text style={styles.chartNote}>Đơn vị: triệu đồng</Text>
           </Card.Content>
         </Card>
 
@@ -346,6 +363,48 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontStyle: 'italic',
     marginTop: 4,
+    color: '#666',
+  },
+  chartWrapper: {
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  chartContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 8,
+    padding: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  chartLegend: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 15,
+    marginBottom: 5,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 6,
+  },
+  legendText: {
+    fontSize: 12,
+    color: '#666',
   },
 
   button: {

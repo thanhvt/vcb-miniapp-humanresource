@@ -26,7 +26,7 @@ const PMSDetailsScreen = () => {
   if (!pmsData) {
     return (
       <View style={styles.container}>
-        <NavBar title="Chi tiết điểm PMS" showBackButton={true} />
+        {/* <NavBar title="Chi tiết điểm PMS" showBackButton={true} /> */}
         <View style={styles.notFoundContainer}>
           <Text style={styles.notFoundText}>Không tìm thấy dữ liệu PMS cho kỳ này</Text>
           <Button mode="contained" onPress={() => navigation.goBack()}>
@@ -85,7 +85,7 @@ const PMSDetailsScreen = () => {
   
   return (
     <View style={styles.container}>
-      <NavBar title={`Chi tiết PMS ${formatPeriod(period, periodType)}`} showBackButton={true} />
+      {/* <NavBar title={`Chi tiết PMS ${formatPeriod(period, periodType)}`} showBackButton={true} /> */}
       <ScrollView style={styles.scrollView}>
         <Card style={styles.summaryCard}>
           <Card.Content>
@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 16,
+    marginBottom: 64,
   },
   notFoundContainer: {
     flex: 1,

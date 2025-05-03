@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, StatusBar, SafeAreaView, Platform } from 'react-native';
 import { Text, Card, DataTable, Button, Divider, useTheme } from 'react-native-paper';
-import { PieChart } from 'react-native-gifted-charts';
 import { Dimensions } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,6 +10,7 @@ import NavBar from '../../components/NavBar';
 import { SafeLinearGradient as LinearGradient } from '../../utils/SafeModules';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import CustomPieChart from '../../components/CustomPieChart';
 
 type Props = NativeStackNavigationProp<IncomeStackParamList>;
 type RouteProps = RouteProp<IncomeStackParamList, 'YearlyIncome'>;
@@ -51,7 +51,7 @@ const YearlyIncomeScreen = () => {
     text: `${Math.round((item.amount / totalEarnings) * 100)}%`,
     color: getRandomColor(index),
     label: item.name,
-    textColor: 'black',
+    textColor: 'white',
   }));
 
   // Random color generator for chart
@@ -152,21 +152,20 @@ const YearlyIncomeScreen = () => {
             {/* Pie Chart for Income Distribution */}
             <Text style={styles.sectionTitle}>Phân bổ thu nhập</Text>
             <View style={styles.chartContainer}>
-              <PieChart
-                data={earningData}
-                donut
-                showGradient
-                sectionAutoFocus
+              <CustomPieChart
+                data={earnings.map((item, index) => ({
+                  value: item.amount,
+                  name: item.name,
+                  color: getRandomColor(index)
+                }))}
                 radius={90}
                 innerRadius={60}
-                focusOnPress
-                textSize={12}
-                textBackgroundRadius={26}
+                donut
                 centerLabelComponent={() => {
                   return (
-                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                      <Text style={{fontSize: 14, color: 'gray'}}>Tổng thu nhập</Text>
-                      <Text style={{fontSize: 16, fontWeight: 'bold'}}>{formatCurrency(totalEarnings)}</Text>
+                    <View style={styles.chartCenterLabel}>
+                      <Text style={styles.chartCenterTitle}>Tổng thu nhập</Text>
+                      <Text style={styles.chartCenterValue}>{formatCurrency(totalEarnings)}</Text>
                     </View>
                   );
                 }}
@@ -357,6 +356,19 @@ const styles = StyleSheet.create({
   chartContainer: {
     alignItems: 'center',
     marginVertical: 16,
+  },
+  chartCenterLabel: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chartCenterTitle: {
+    fontSize: 14,
+    color: '#666',
+  },
+  chartCenterValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0a6640',
   },
   sectionTitle: {
     fontSize: 16,

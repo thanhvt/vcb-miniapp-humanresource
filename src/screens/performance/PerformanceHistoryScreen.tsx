@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { Text, Card, Button, Divider, useTheme, List, Chip, FAB } from 'react-native-paper';
-import { LineChart } from 'react-native-gifted-charts';
+import CustomLineChart from '../../components/CustomLineChart';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -44,23 +44,8 @@ const PerformanceHistoryScreen = () => {
     };
   }).reverse();
   
-  // Line chart configuration for gifted-charts
-  const lineChartConfig = {
-    spacing: 40,
-    color: theme.colors.primary,
-    thickness: 2,
-    dataPointsColor: theme.colors.primary,
-    dataPointsRadius: 5,
-    initialSpacing: 20,
-    endSpacing: 20,
-    showFractionalValues: true,
-    hideRules: true,
-    hideYAxisText: false,
-    yAxisColor: 'lightgray',
-    yAxisTextStyle: { color: 'gray' },
-    xAxisColor: 'lightgray',
-    xAxisTextStyle: { color: 'gray', textAlign: 'center', fontSize: 10 },
-  };
+  // Chart color from theme
+  const chartColor = theme.colors.primary;
   
   // Format period for display
   const formatPeriod = (period: string, periodType: 'month' | 'quarter' | 'year') => {
@@ -87,7 +72,7 @@ const PerformanceHistoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <NavBar title="Lịch sử đánh giá" showBackButton={true} />
+      {/* <NavBar title="Lịch sử đánh giá" showBackButton={true} /> */}
       <ScrollView style={styles.scrollView}>
         <Card style={styles.periodTypeCard}>
           <Card.Content>
@@ -124,14 +109,11 @@ const PerformanceHistoryScreen = () => {
         <Card style={styles.chartCard}>
           <Card.Title title={`Xu hướng PMS theo ${periodType === 'month' ? 'tháng' : periodType === 'quarter' ? 'quý' : 'năm'}`} />
           <Card.Content>
-            <LineChart
+            <CustomLineChart
               data={chartData}
               width={screenWidth}
               height={220}
-              {...lineChartConfig}
-              curved
-              isAnimated
-              animationDuration={1000}
+              color={theme.colors.primary}
               maxValue={5}
               noOfSections={5}
               yAxisLabelTexts={['0', '1', '2', '3', '4', '5']}
@@ -192,6 +174,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 16,
+    marginBottom: 64,
   },
   periodTypeCard: {
     marginBottom: 16,
