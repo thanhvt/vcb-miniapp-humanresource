@@ -32,7 +32,7 @@ const PersonalDashboardScreen = () => {
   const navigateToInfo = () => navigation.navigate('PersonalInfo');
   const navigateToChart = () => navigation.navigate('ManagementChart');
   const navigateToEdit = () => navigation.navigate('EditProfile');
-
+  const navigateToUtilities = () => navigation.navigate('Utilities'); 
   return (
     <View style={styles.mainContainer}>
       <LinearGradient 
@@ -63,7 +63,7 @@ const PersonalDashboardScreen = () => {
                 icon="account-edit"
                 mode="contained"
                 size={24}
-                onPress={navigateToEdit}
+                onPress={navigateToUtilities}
                 containerColor="#ffffff"
                 iconColor={"#0a6640"}
                 style={styles.utilityButton}

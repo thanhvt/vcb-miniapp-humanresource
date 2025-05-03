@@ -38,6 +38,9 @@ importers:
       react-native:
         specifier: 0.78.2
         version: 0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0)
+      react-native-ble-manager:
+        specifier: ^12.1.4
+        version: 12.1.4(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
       react-native-ble-plx:
         specifier: ^3.5.0
         version: 3.5.0(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
@@ -80,6 +83,9 @@ importers:
       react-native-svg:
         specifier: ^15.11.2
         version: 15.11.2(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
+      react-native-tesseract-ocr:
+        specifier: ^2.0.3
+        version: 2.0.3(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0)
       react-native-vector-icons:
         specifier: ^10.2.0
         version: 10.2.0
@@ -4520,6 +4526,12 @@ packages:
   react-is@19.1.0:
     resolution: {integrity: sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==}
 
+  react-native-ble-manager@12.1.4:
+    resolution: {integrity: sha512-APaT50CtYOvdvK2uSOErLSaC6oTjdz1S1Dx/zS749KB1VTbwmb1WfPnjCmtssX1HC+8AyJDw7MJTiYWZ2/BhHg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   react-native-ble-plx@3.5.0:
     resolution: {integrity: sha512-PeSnRswHLwLRVMQkOfDaRICtrGmo94WGKhlSC09XmHlqX2EuYgH+vNJpGcLkd8lyiYpEJyf8wlFAdj9Akliwmw==}
     engines: {node: '>= 18.0.0'}
@@ -4623,6 +4635,12 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  react-native-tesseract-ocr@2.0.3:
+    resolution: {integrity: sha512-GD1pKVD+BwfAs/o6FvdKIecOJHamMx/WIdxZxdGB2/tRiIy1uFukptvii7XS5HC7gAiFvMTKFu05DX/LTdWwWw==}
+    peerDependencies:
+      react: ^16.8.1
+      react-native: '>=0.60.0-rc.0 <1.0.x'
 
   react-native-vector-icons@10.2.0:
     resolution: {integrity: sha512-n5HGcxUuVaTf9QJPs/W22xQpC2Z9u0nb0KgLPnVltP8vdUvOp6+R26gF55kilP/fV4eL4vsAHUqUjewppJMBOQ==}
@@ -11187,6 +11205,11 @@ snapshots:
 
   react-is@19.1.0: {}
 
+  react-native-ble-manager@12.1.4(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-native: 0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0)
+
   react-native-ble-plx@3.5.0(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0):
     dependencies:
       react: 19.0.0
@@ -11307,6 +11330,11 @@ snapshots:
       react: 19.0.0
       react-native: 0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0)
       warn-once: 0.1.1
+
+  react-native-tesseract-ocr@2.0.3(react-native@0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-native: 0.78.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.0.1(typescript@5.8.3))(@types/react@19.1.2)(react@19.0.0)
 
   react-native-vector-icons@10.2.0:
     dependencies:
