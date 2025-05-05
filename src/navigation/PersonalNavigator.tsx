@@ -62,7 +62,7 @@ const PersonalNavigator = () => {
           component={WebViewTestScreen}
           options={{ title: 'WebView Test' }}
         />
-      <Personal.Screen
+      {/* <Personal.Screen
           name="BluetoothTest"
           component={BluetoothTestScreen}
           options={{ title: 'Bluetooth Test' }}
@@ -71,27 +71,27 @@ const PersonalNavigator = () => {
           name="NFCTest"
           component={NFCTestScreen}
           options={{ title: 'NFC Test' }}
-        />
+        /> */}
       <Personal.Screen
           name="CameraTest"
           component={CameraTestScreen}
           options={{ title: 'Camera Test' }}
         />
-      <Personal.Screen
+      {/* <Personal.Screen
           name="OCRTest"
           component={OCRTestScreen}
           options={{ title: 'OCR Test' }}
-        />
-      <Personal.Screen
+        /> */} 
+      {/* <Personal.Screen
           name="ShareTest"
           component={ShareTestScreen}
           options={{ title: 'Share Test' }}
         />
-      <Personal.Screen
+        <Personal.Screen
           name="PDFViewer"
           component={PDFViewerScreen}
           options={{ title: 'PDF Viewer' }}
-        />
+        /> */}
     </Personal.Navigator>
   );
 };

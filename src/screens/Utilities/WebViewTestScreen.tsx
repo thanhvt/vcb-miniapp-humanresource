@@ -1,4 +1,5 @@
-import { View, TextInput, Button, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { TextInput, Button } from "react-native-paper";
 import WebView from 'react-native-webview';
 import { useState } from "react";
 
